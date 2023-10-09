@@ -1,0 +1,544 @@
+Proccodes Library Documentation
+mdshumel 5.28.2021
+
+Proccodes Library is designed to standardize/ streamline DiFC data 
+pre-processing and peak matching. To use the library, find its location
+on your computer and save the path (including the proccodes folder itself) 
+as a string. Use genpath(...) to include all subfolders and use 
+addpath(...) to add it to MATLAB's search path see below:
+
+proccodes_lib = 'C:\Users...\proccodes';
+addpath(genpath(proccodes_lib))
+
+Alternatively include the path by default on startup by putting the above
+code into your startup.m file. I generally put my startup.m file in
+C:\Program Files\MATLAB\R2021a\toolbox\local, but no such file exists by
+default
+---------------------------------------------------------------------------
+Notes:
+---------------------------------------------------------------------------
+Peaks Struct:
+Struct containing data about peaks. All fields (except count) are a vector 
+of values with length n, where n is the number of peaks stored in the 
+struct. The count field is the scalar n.
+
+Peaks Struct Fields:
+pks - Heights of each peak
+locs - Index of each peak
+widths - Width of each peak (with linear interpolation b/w indicies)
+proms - Prominence of each peak as calculated by findpeaks(...)
+count - Number of peaks in the peak struct
+
+Params Struct:
+Struct containing data useful for plotting data. Largely inherited from 
+DiDAQ. Each set of data should have an associated params struct.
+
+Params Struct Fields:
+name -  Name assigned to set of data
+units - Y-axis units when plotting data vs. time
+igain - Internal gain. NI DAQ Can only collect data in volts, so data is 
+        multplied by igain to convert back to the units the PMT originally
+        output. Since this was done during DAQ, this is largely unused 
+        after the fact but stored nonetheless for posterity's sake
+color - Color the data should be when plotted
+fiber - Some (most) DiFC systems have multiple fibers. This field denotes 
+        which fiber data set was collected on
+
+Colors/RGB Triplets:
+MATLAB's support for hex colors is... not great. To pick custom colors, use
+a hex color picker (https://htmlcolorcodes.com/color-picker/) and convert
+each set of two hex digits to decimal and divide each by 255. 
+Alternatively, if given decimal RGB values, divide each by 255. List the
+Results in a 1x3 array to get an RGB triplet
+Example:
+Hex Color #4B179D -> [4B 17 9D] -> [75 23 157] ./ 255 -> 
+[0.294 0.090 0.616] <- Desired RGB triplet
+
+Dynamic Thresholding:
+Dynamic thresholding is done by taking a moving standard deviation (with 
+window std_window, see movstd(...)) on the data set and processing the 
+curve to try to exclude deviations that reuslt from signal, leaving those
+that result from noise. Because findpeaks(...) does not support a moving
+threshold, the data is divided into segments (with length dynamic_window).
+findpeaks(...) is run on each segment with a peak threshold calculated from 
+the mean of the processed std curve on that segment
+
+---------------------------------------------------------------------------
+Functions:
+---------------------------------------------------------------------------
+preProc:
+
+Signature:
+[data_bs, noise, peaks, thresh_curve, in_dat, hh] =... 
+    preProc(data, time, params, Name, Value)
+
+Summary:
+Pre-processes input data and identifies peak candidates
+
+Details:
+Smooths and background subtracts data, estimates noise, calculates a peak 
+threshold, and identifies peak candidates. Packages parameters used for 
+processing into in_dat struct. This mostly serves as a wrapper for the 
+preProcessing modes that assigns  default values to most parameters and 
+serves as a clean way of interfacing with the pre-processing functions. 
+
+Outputs:
+data_bs: double matrix - Smoothed, background-subtracted data, same size as 
+                         data
+noise: double vector - An estimate of noise for each column of input data
+peaks: struct vector - vector of peaks structs containing data about the 
+                       peak candidates for each column of input data
+thresh_curve: double matrix - Peak threshold for each column of input data 
+                              at all indicies. Same size as data
+in_dat: struct - Contains parameters used for pre-processing
+
+hh: TiledLayout - A handle to the peak plot, remains a valid reference so 
+                  long as the figure isn't closed. Can be used to modify
+                  properties of the peak plot
+
+Inputs:
+data: double matrix - Matrix of data with n columns where eahc column is a
+                      set of data we wish to process
+time: double vector - Vector of time values for every columnar index of 
+                      data
+params: struct vector - Vector of params structs containing data about 
+                        plotting each column of data. Vector is length n. 
+                        Omit argument or input [] if you 
+                        don't wish to generate any plots, but a non-empty 
+                        value is required to show detailed plots
+
+Name-Value Pairs:
+Mode: string - Which mode of preprocessing is being used:
+
+    stdSmooth: Dynamic threshold created by taking a moving standard 
+    deviation curve, excluding deviations that increase too rapdidly, and 
+    exponentially smoothing the curve containing included deviations. The
+    noise is estimated as the mean of this curve
+
+    stdMed: Dynamic threshold created by taking a moving standard deviation 
+    curve, and applying a median filter to the curve. The noise is 
+    estimated as the mean of this curve 
+
+    lazyThresh: Static threshold of (estimated noise) * 
+    (relative threshold). Noise estimated as the standard deviation of the 
+    data.
+
+    setThresh: Static threshold of the value assigned to HardThresh. Noise
+    estimated as the standard deviation of the data. NOTE: THE 'HardThresh'
+    NAME-VALUE PAIR MUST BE SET WHEN USING THIS MODE!
+     
+    Default: 'stdSmooth'
+
+SmoothWindow: double - Length in seconds of the moving average filter 
+                       window used to smooth the data/ moving standard 
+                       deviation curves 
+    Default: 0.01 
+
+BackgroundWindow: double - Length in seconds of the median filter window 
+                           used for background subtraction
+    Default: 5 
+
+HardThresh: double vector - Used in the setThresh mode as the min peak 
+		                    threshold. This value MUST be set if using 
+			                setThresh mode. The default value WILL cause 
+                            an error
+    Default: NaN
+
+RelativeThresh: double (vector) - A multiplicative factor for peak thresholds 
+                                  that are not hard thresholds. 
+                                  MinPeakThreshold = peak_thresh * rel_thresh
+                                  Can also be input as a vecotr with a 
+                                  relative threshold for each channel
+    Default: 5
+
+ProminenceFactor: double - A multiplicative factor for peak prominence 
+                           threshold. MinPeakProminence = 
+                           peak_thresh * prominence_factor
+    Default: 1
+
+StdWindow: double - Window length in seconds for generating the moving
+                    standard deviation curve used for generating the 
+                    dynamic threshold
+    Default: 1
+
+DynamicWindow: double - Window length in seconds for the intervals on which
+                        the processed std curve is averaged and
+                        findpeaks(...) is run during dynamic thresholding
+    Default: 60
+
+NoiseAlpha: double - Exponetial smoothing factor used to smooth the moving
+                     standard deviation curve in the stdSmooth mode
+    Default: 0.5
+
+StdThresh: double - Deviations are excluded if they are greater than
+                    (previous deviaiton) * std_thresh in the stdSmooth mode
+    Default: 1.05
+
+NoiseWindow: double - Length in seconds of the median filter window used
+                      to filter the moving standard deviation curve in the
+                      stdMed mode.        
+    Default: 10
+
+RemoveBunchedPeaks: logical - Does pre-processing remove peaks that are 
+                              bunched together? Keeps only the highest peak
+                              from a set of bunched peaks. See 
+                              removedBunchedPeaks(...) for details
+    Default: true
+
+CoincidenceWindow: double - The length of the one sided window within which
+                            peaks are considered bunched. See
+                            removeBunchedPeaks(...) for details
+    Default: 0.03
+
+ShowDetailedPlots: logical - Does the user want detailed pre-processing 
+                             plots to show up? These plots include:
+    - Orginal Data
+    - Background level
+    - Smoothed, background subtracted data (without peaks)
+    - Moving STD curve (if applicable)
+    - Processed STD curve (if applicable)
+
+    Defualt: false
+
+PeakColor: RGB Triplet - Color of plotted peaks as an RGB triplet
+    Default: [1 0 1] (Magenta)
+
+ThresholdColor: RGB Triplet - Color of plotted threshold curve as an RGB
+                              triplet
+    Default: [0 1 1] (Cyan)
+---------------------------------------------------------------------------
+checkNoisyPMT:
+
+Signature:
+[noise_flag1, noise_flag2] = ...
+    checkNoisyPMT(data1, data2, time, params, Name, Value)
+
+Summary:
+Determines if either PMT collecting data from a split fiber is noisy
+
+Details:
+Takes in data from two PMTs from the same fiber that should have the same 
+data and checks whether or not they are noisy. Can create plots for manual
+inspection of data from each PMT. Data from PMTs must be pre-processed 
+prior to the noise check. This is done through preProcLazy(...), and this 
+pre-processing can be adjusted through name-value pairs, although doing so 
+is not recommended/ pointless.
+
+A PMT is considered noisy if there are noise_thresh * # peaks more
+peaks in the current PMT than than the other PMT (If # peaks found
+in the other PMT is 0, look for noise_thresh # peaks in the current
+PMT.
+
+Outputs:
+noise_flag1: logical - Is the data from the first PMT noisy?
+noise_flag2: logical - Is the data from the second PMT noisy?
+
+Inputs:
+data1: double vector - raw data from the first PMT on the fiber
+
+data2: double vector - raw data from the second PMT on the fiber 
+
+time: double vector - Vector of time values for both data sets
+
+params: struct vector - Vector of params structs containing data about 
+                        plotting both sets of data. Vector is length 2. 
+                        Input [] if you don't wish to generate any plots
+
+Name-Value Pairs:
+
+SmoothWindow: double - Length in seconds of the moving average filter 
+                       window used to smooth the data/ moving standard 
+                       deviation curves 
+    Default: 0.01 
+
+BackgroundWindow: double - Length in seconds of the median filter window 
+                           used for background subtraction
+    Default: 5
+
+RelativeThresh: double - A multiplicative factor for peak thresholds that 
+                         are not hard thresholds. MinPeakHeight = 
+                         peak_thresh * rel_thresh 
+    Default: 5
+
+ProminenceFactor: double - A multiplicative factor for peak prominence 
+                           threshold. MinPeakProminence = 
+                           peak_thresh * prominence_factor
+    Default: 1 
+
+NoiseThresh: double - A threshold for determining whether or not a PMT is
+                      noisy. See details for what constitutes a noisy PMT
+    Default: 3
+---------------------------------------------------------------------------
+removeCoincPeaks:
+
+Signature:
+[rm_coinc_peaks1, rm_coinc_peaks2, coinc_pk_count] =... 
+    removeCoincPeaks(peaks1, peaks2, time, Name, Value)
+
+Summary:
+Removes peaks close together in time, but in different data sets
+
+Details:
+Removes peaks located +- some coincidence window to each other in different 
+data sets. Does not  keep any peaks identified as coincident. Returns the 
+# of peaks removed. Swapping the order of inputs does not matter other than 
+that the output structs will also be swapped. Removes peaks coincident to 
+each other in different data sets. For removing peaks bunched together in 
+the same data set, see removeBunchedPeaks(...).
+
+Outputs:
+rm_coinc_peaks1: struct - first peaks struct with coincident peaks removed
+rm_coinc_peaks2: struct - second peaks struct with coincident peaks removed
+coinc_pk_count: double - # of peaks removed
+
+Inputs:
+peaks1: struct - first peaks struct
+peaks2: struct - second peak struct
+time: double vector - vector of time values for both peak structs
+
+Name-Value Pairs:
+CoincidenceWindow: double - The length of the one sided window within which
+                            peaks are considered coincident.
+    Default: 0.03
+---------------------------------------------------------------------------
+matchDirectionalPeaks:
+
+Signature:
+[matched_peaks1, matched_peaks2, matched_speed, matched_score] =... 
+    matchDirectionalPeaks(peaks1, peaks2, time, probe_distance,...
+    Name, Value)
+
+Summary:
+Matches peaks in the first peaks struct to those that occur later in time 
+in the second
+
+Details:
+Identifies match candidates for every peak in the first input. Every match 
+is scored by similarity in shape between the two matched peaks, where a
+higher score indicates a higher dissimilarity in shape. The function then 
+selects the best matches by score, and returns peak structs containing 
+those matches
+
+Scoring is done by taking the ratio of peak heights, widths, and estimated
+vs. actual speeds, taking their absolute logarithms base 2 (so that a peak
+with half the width of the original has the same score as a peak with twice
+the width of the original with a score of 1). The scores of the individual 
+ratios are then summed for the total score.   
+
+Outputs:
+matched_peaks1: struct - first peak struct containing only matched peaks
+matched_peaks2: struct - second peak struct containing only matched peaks
+matched_speed: double vector - array of speeds (mm/s) of each match
+matched_score: double vector - array of scores assigned to each match
+
+Inputs:
+peaks1: struct - first peaks struct
+peaks2: struct - second peak struct
+time: double vector - vector of time values for both peak structs
+probe_distance: double - distance (mm) between probes
+
+Name-Value Pairs:
+MaxSpeed: double - the maximum speed of a detection in mm/s, 
+                   determining the lower time bound in which to search for 
+                   match candidates 
+    Default: 300
+
+MinSpeedFactor: double = the factor by which the estimated time is
+                         multiplied to determine the upper time bound 
+                         (lower speed bound) in which to search for match
+                         candidates
+    Default: 10
+
+MaxScore: double - higher scores indicate a higher dissimilarity in peak 
+                   shape. This sets a threshold for how high the score can
+                   be before the peak is no longer considered a match.
+    Default: 4
+---------------------------------------------------------------------------
+matchCoincPeaks:
+
+Signature:
+[coinc_peaks1, coinc_peaks2, multi_pk_count] = ...
+    matchCoincPeaks(peaks1, peaks2, time, Name, Value)
+
+Summary:
+Matches peaks in the first peak struct to those in the second that are 
+close together in time.
+
+Details:
+Matches peaks located +- some coincidence window to each other in different 
+data sets. Swapping the order of inputs does not matter other than that the 
+output structs will also be swapped. If there are multiple peaks within the
+coincidence window, the largest will be matched. The number of times this 
+happens is returned
+
+Outputs:
+coinc_peaks1: struct - first peak struct containing only coincidentally 
+                       matched peaks
+coinc_peaks2: struct - second peak struct containing only coincidentally 
+                       matched peaks
+multi_pk_count: double - Number of instances in which one peak in one
+                         struct was mapped to multiple peaks in the other
+                         struct.
+
+Inputs:
+peaks1: struct - first peaks struct
+peaks2: struct - second peak struct
+time: double vector - vector of time values for both peak structs
+
+Name-Value Pairs:
+CoincidenceWindow: double - The length of the one sided window within which
+                            peaks can be considered considered coincident.
+---------------------------------------------------------------------------
+plotPeaks:
+
+Signature:
+plotPeaks(data, time, peaks, thresh_curve, params, Name, Value)
+
+Summary:
+Generates a data vs. time plot with peaks and threshold curve. Makes a 
+separate subplot for each data set.
+
+Details:
+Supports plotting unmatched peaks, peaks matched in the forward/ reverse
+directions, and peaks matched coincidentally. Graphical properties are
+inherited from these options and the given params struct. 
+
+Outputs:
+N/A
+
+Inputs:
+data: double matrix - data matrix with n columns where n is the number of 
+                      data sets we wish to plot
+time: double vector - vector of time values for data sets
+peaks: struct vector - vector of n peak structs we wish to plot
+thresh_curve: double matrix - threshold curves for each data set. Same size 
+                              as data
+params: struct vector - vector of n params structs with data useful for 
+                        plotting data
+
+Name-Value Pairs:
+Direction: string - which direction (if any) the peaks were matched in:
+
+    fwd: The peaks currently being plotted were matched in the forward 
+         direction
+
+    rev: The peaks currently being plotted were matched in the reverse 
+         direction
+
+    coinc: The peaks currently being plotted were matched as coincident 
+           peaks
+
+    none: The peaks currently being plotted are unmatched/ we don't care 
+          about their directionality
+
+    Default: 'none'
+
+PeakColor: RGB Triplet - Color of plotted peaks as an RGB triplet
+    Default: [1 0 1] (Magenta)
+
+ThresholdColor: RGB Triplet - Color of plotted threshold curve as an RGB
+                              triplet
+    Default: [0 1 1] (Cyan)
+---------------------------------------------------------------------------
+scanDirName
+
+Signature: 
+[scan] = expDirName(scanDir)
+
+Summary:
+Returns the name of the scan from the given scan directory
+
+Details:
+Supports PC and UNIX directories
+
+Outputs:
+scan: char vector - The name of the experiment
+
+Inputs 
+scanDir: char vector - The experiment folder, containing, for instance, the 
+                       *_F1 and *_F2 files
+---------------------------------------------------------------------------
+formatData
+
+Signature:
+[data_sum, time, newParams] = formatData(scanDir)
+
+Summary: 
+Sums data from both PMTs and selects 1 params struct for the sum
+
+Details:
+The standard way to handle PMTs collecting data split from the same fiber 
+is to sum their data. DO NOT use this function if this isn't how you want
+to handle PMTs on the same fiber. This function can be used on single PMT
+systems to rename the the params struct to contain the experiment name.
+
+Outputs:
+data_sum: double vector - Vector containing data summed from all PMTs on 
+                          the fiber
+param: struct - Selected params struct with the name modified to remove the
+                reference to PMT number
+
+Inputs:
+data: double matrix - data from PMTs on the same fiber, where each column
+                      is from a different PMTs
+params: struct vector - The vector of params structs associated with each
+                        PMT
+experiment: (char vector) - Name of the experiment. Optional argument used 
+                            for giving the params struct a more precise 
+                            name
+---------------------------------------------------------------------------
+seePeaks
+
+Signature:
+seePeaks(data, time, peaks, thresh_curve, params, Name, Value)
+
+Summary:
+Allows manual inspection of peaks from a scan
+
+Details:
+
+Outputs:
+N/A
+
+Inputs:
+data: double matrix - data matrix with n columns where n is the number of 
+                      data sets we wish to plot
+time: double vector - vector of time values for data sets
+peaks: struct vector - vector of n peak structs we wish to plot
+thresh_curve: double matrix - threshold curves for each data set. Same size 
+                              as data
+params: struct vector - vector of n params structs with data useful for 
+                        plotting data
+
+Name-Value Pairs:
+Channel: double - Which channel is the primary one we are viewing. Must be
+                  less than or equal to the number of channels included in
+                  the inputs
+    Default: 1
+
+StartTime: double - What time do we start viewing in the primary channel? 
+                    Incompatible with 'StartLoc'
+    Default: NaN
+
+StartLoc: double - What index do we start viewing in the primary channel?
+                   Incompatible with 'StartTime'. If neither Starts are 
+                   set, viewing begins at the start of the scan
+    Default: NaN
+
+PeakColor: RGB Triplet - Color of plotted peaks as an RGB triplet
+    Default: [.757 .122 .776]
+
+ThresholdColor: RGB Triplet - Color of plotted threshold curve as an RGB
+                              triplet
+    Default: [0 .478 .439]
+
+MarkerColor: RGB Triplet - Color of marker for current peak
+    Default: [.380 0 0]
+---------------------------------------------------------------------------
+countDetectionsPerInterval
+
+Josh will add description 
+---------------------------------------------------------------------------
+determineBestDirectionalMatch
+
+Signature:
