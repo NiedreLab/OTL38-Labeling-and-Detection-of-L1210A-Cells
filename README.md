@@ -1,14 +1,13 @@
 # OTL38-Labeling-and-Detection-of-L1210A-Cells
 
-Northeastern University Department of Bioengineering, Biomedical Optics Research Group
+Joshua Pace (1), Jane Lee (1), Madduri Srinivasarao (2), Shivakrishna Kallepu (2), Philip Low (2), Mark Niedre (1)
 
-Purdue University, Department of Chemistry
+(1) Northeastern University Department of Bioengineering, Biomedical Optics Research Group
+
+(2) Purdue University, Department of Chemistry
 
 niedrelab@outlook.com
 
-Mark Niedre
-
-Joshua Pace
 
 MATLAB Files for studing the labeling and detection of L1210A cells in vivo with OTL38 and NIR-DiFC.
 
