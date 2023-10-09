@@ -1,0 +1,1362 @@
+%Plotting Figures for "In Vivo Labeling and Detection of Circulating Tumor Cells in Mice Using OTL38" Manuscript
+%Josh Pace 20230502
+
+%Data is avaliable through  the Pennsieve datasharing platform (https://discover.pennsieve.io/datasets/346)
+
+%Download the "DiFC_Files" folder and place this script in the same directory as that folder. The paths to loading the data should work for mac
+
+%Leg control scans
+legControl1_threshOf4 = load('DiFC_Files/20220608_Leg_Control_1/20220608_Leg_Control_1_proc_relThresh_4_4.mat');
+legControl1_threshOf4_falseMatchedAmps = legControl1_threshOf4.fwd_peaks(2).pks;
+
+
+legControl2_threshOf4 = load('DiFC_Files/20220611_Leg_Control_1/20220611_Leg_Control_1_proc_relThresh_4_4.mat');
+legControl2_threshOf4_falseMatchedAmps = legControl2_threshOf4.fwd_peaks(1).pks;
+
+legControl3_threshOf4 = load('DiFC_Files/20220611_Leg_Control_2/20220611_Leg_Control_2_proc_relThresh_4_4.mat');
+legControl3_threshOf4_falseMatchedAmps = legControl3_threshOf4.fwd_peaks(2).pks;
+
+
+%OTL38 Only Leg (2.5µg)
+OTL38OnlyLeg1_threshOf4 = load('DiFC_Files/20220607_2.5ug_OTL38_Only_Leg_1_/20220607_2.5ug_OTL38_Only_Leg_1__proc_relThresh_4_4.mat');
+OTL38OnlyLeg1_threshOf4_falseMatchedFwdAmps = OTL38OnlyLeg1_threshOf4.fwd_peaks(1).pks;
+OTL38OnlyLeg1_threshOf4_falseMatchedRevAmps = OTL38OnlyLeg1_threshOf4.rev_peaks(1).pks;
+OTL38OnlyLeg1_threshOf4_falseMatchedAmps = [OTL38OnlyLeg1_threshOf4_falseMatchedFwdAmps' OTL38OnlyLeg1_threshOf4_falseMatchedRevAmps'];
+OTL38OnlyLeg2_threshOf4 = load('DiFC_Files/20220612_2.5ug_OTL38_Only_Leg_1_2nd_hour/20220612_2.5ug_OTL38_Only_Leg_1_2nd_hour_proc_relThresh_4_4.mat');
+OTL38OnlyLeg2_threshOf4_falseMatchedFwdAmps = OTL38OnlyLeg2_threshOf4.fwd_peaks(1).pks;
+OTL38OnlyLeg2_threshOf4_falseMatchedRevAmps = OTL38OnlyLeg2_threshOf4.rev_peaks(1).pks;
+OTL38OnlyLeg2_threshOf4_falseMatchedAmps = [OTL38OnlyLeg2_threshOf4_falseMatchedFwdAmps' OTL38OnlyLeg2_threshOf4_falseMatchedRevAmps'];
+OTL38OnlyLeg3_threshOf4 = load('DiFC_Files/20220612_2.5ug_OTL38_Only_Leg_2_1st_hour/20220612_2.5ug_OTL38_Only_Leg_2_1st_hour_proc_relThresh_4_4.mat');
+OTL38OnlyLeg3_threshOf4_falseMatchedFwdAmps = OTL38OnlyLeg3_threshOf4.fwd_peaks(1).pks;
+OTL38OnlyLeg3_threshOf4_falseMatchedRevAmps = OTL38OnlyLeg3_threshOf4.rev_peaks(1).pks;
+OTL38OnlyLeg3_threshOf4_falseMatchedAmps = [OTL38OnlyLeg3_threshOf4_falseMatchedFwdAmps' OTL38OnlyLeg3_threshOf4_falseMatchedRevAmps'];
+
+%Leg no injection vs OTL38 only background (mean and std, looking at P2)
+
+allLegNoInjectionControlBackground = [legControl1_threshOf4.mean_background(2) legControl2_threshOf4.mean_background(2) legControl3_threshOf4.mean_background(2)];
+meanLegNoInjectionControlBackground = mean(allLegNoInjectionControlBackground);
+stdLegNoInjectionControlBackground = std(allLegNoInjectionControlBackground);
+
+allLegOTL38OnlyInjectionControlBackground = [OTL38OnlyLeg1_threshOf4.mean_background(2) OTL38OnlyLeg2_threshOf4.mean_background(2) OTL38OnlyLeg3_threshOf4.mean_background(2)];
+meanLegOTL38OnlyInjectionControlBackground = mean(allLegOTL38OnlyInjectionControlBackground);
+stdLegOTL38OnlyInjectionControlBackground = std(allLegOTL38OnlyInjectionControlBackground);
+
+%Leg  no injection vs OTL38 only noise
+allLegNoInjectionControlNoise = [legControl1_threshOf4.noise(2) legControl2_threshOf4.noise(2) legControl3_threshOf4.noise(2)];
+meanLegNoInjectionControlNoise = mean(allLegNoInjectionControlNoise);
+stdLegNoInjectionControlNoise = std(allLegNoInjectionControlNoise);
+
+allLegOTL38OnlyInjectionControlNoise = [OTL38OnlyLeg1_threshOf4.noise(2) OTL38OnlyLeg2_threshOf4.noise(2) OTL38OnlyLeg3_threshOf4.noise(2)];
+meanLegOTL38OnlyInjectionControlNoise = mean(allLegOTL38OnlyInjectionControlNoise);
+stdLegOTL38OnlyInjectionControlNoise = std(allLegOTL38OnlyInjectionControlNoise);
+
+
+
+%prelabled leg #1 
+prelabeled_leg1_threshOf4 = load("DiFC_Files/20220621_OTL38_Prelabeled_L1210A_Leg_1_2_first_hour/20220621_OTL38_Prelabeled_L1210A_Leg_1_2_first_hour_proc_relThresh_4_4.mat");
+prelabeledLeg1_revPeakAmp_threshOf4 = prelabeled_leg1_threshOf4.rev_peaks(1).pks;
+prelabeledLeg1_fwdPeakAmp_threshOf4 = prelabeled_leg1_threshOf4.fwd_peaks(2).pks; %Better
+
+
+%prelabled leg #2 (looking at first hour of data)
+prelabeled_leg2_threshOf4 = load("DiFC_Files/20220625_OTL38_Prelabeled_L1210A_Leg_1_first_hour/20220625_OTL38_Prelabeled_L1210A_Leg_1_first_hour_proc_relThresh_4_4.mat");
+prelabeledLeg2_revPeakAmp_threshOf4 = prelabeled_leg2_threshOf4.rev_peaks(2).pks; %Better
+prelabeledLeg2_fwdPeakAmp_threshOf4 = prelabeled_leg2_threshOf4.fwd_peaks(2).pks;
+
+%prelabled leg #3 
+prelabeled_leg3_threshOf4 = load('DiFC_Files/20220630_OTL38_Prelabeled_L1210A_Leg_5/20220630_OTL38_Prelabeled_L1210A_Leg_5_proc_relThresh_4_4.mat');
+prelabeledLeg3_revPeakAmp_threshOf4 = prelabeled_leg3_threshOf4.rev_peaks(1).pks;
+prelabeledLeg3_fwdPeakAmp_threshOf4 = prelabeled_leg3_threshOf4.fwd_peaks(2).pks;%Better
+
+%In vivo labeled leg  1 (20220210)
+inVivo_leg1_threshOf4 = load('DiFC_Files/2.5ug_OTL38_L1210A_Leg_1_higher_gain/2.5ug_OTL38_L1210A_Leg_1_higher_gain_proc_relThresh_4_4.mat');
+inVivo_leg1_revPeakAmp_threshOf4 = inVivo_leg1_threshOf4.rev_peaks(1).pks; %Better
+inVivo_leg1_fwdPeakAmp_threshOf4 = inVivo_leg1_threshOf4.fwd_peaks(1).pks; %Better
+
+InVIvo_leg_1_threshOf_4_RevMatched_CountPerMin = numel(inVivo_leg1_threshOf4.rev_peaks(1).pks)/(inVivo_leg1_threshOf4.time(end)/60);
+InVIvo_leg_1_threshOf_4_FwdMatched_CountPerMin = numel(inVivo_leg1_threshOf4.fwd_peaks(1).pks)/(inVivo_leg1_threshOf4.time(end)/60);
+InVIvo_leg_1_threshOf_4_Matched_CountPerMin =InVIvo_leg_1_threshOf_4_RevMatched_CountPerMin + InVIvo_leg_1_threshOf_4_FwdMatched_CountPerMin;
+
+%For noise calculations and theoretical DiFC detctions
+InVIvo_leg_1_first10mins_noise_P1 = 48.546;
+InVIvo_leg_1_first10mins_noise_P2 = 37.053;
+
+% In vivo labeled leg 2 (20220413)
+inVivo_leg2_threshOf4 = load('DiFC_Files/20220413_2.5ug_OTL38_L1210A_Leg_1/20220413_2.5ug_OTL38_L1210A_Leg_1_proc_relThresh_4_4.mat');
+inVivo_leg2_fwdPeakAmp_threshOf4 = inVivo_leg2_threshOf4.fwd_peaks(1).pks; %Better
+inVivo_leg2_revPeakAmp = 0;
+InVIvo_leg_2_threshOf_4_FwdMatched_CountPerMin = numel(inVivo_leg2_threshOf4(1).fwd_peaks(1).pks)/(inVivo_leg2_threshOf4.time(end)/60);
+InVIvo_leg_2_threshOf_4_Matched_CountPerMin = 0 + InVIvo_leg_2_threshOf_4_FwdMatched_CountPerMin;
+
+%For noise calculations and theoretical DiFC detctions
+InVIvo_leg_2_first10mins_noise_P1 = 109.457;
+InVIvo_leg_2_first10mins_noise_P2 = 40.416;
+
+% In vivo labeled leg 3 (20220601)
+inVivo_leg3_threshOf4 = load('DiFC_Files/20220601_2.5ug_OTL38_L1210A_Leg_1_realign/20220601_2.5ug_OTL38_L1210A_Leg_1_realign_proc_relThresh_4_4.mat');
+inVivo_leg3_fwdPeakAmp_threshOf4 = inVivo_leg3_threshOf4.fwd_peaks(1).pks;
+inVivo_leg3_revPeakAmp_threshOf4 = inVivo_leg3_threshOf4.rev_peaks(2).pks; %Better
+
+InVIvo_leg_3_threshOf_4_RevMatched_CountPerMin = numel(inVivo_leg3_threshOf4.rev_peaks(1).pks)/(inVivo_leg3_threshOf4.time(end)/60);
+InVIvo_leg_3_threshOf_4_FwdMatched_CountPerMin = numel(inVivo_leg3_threshOf4(1).fwd_peaks(1).pks)/(inVivo_leg3_threshOf4.time(end)/60);
+InVIvo_leg_3_threshOf_4_Matched_CountPerMin =InVIvo_leg_3_threshOf_4_RevMatched_CountPerMin + InVIvo_leg_3_threshOf_4_FwdMatched_CountPerMin;
+
+%For noise calculations and theoretical DiFC detctions
+InVIvo_leg_3_first10mins_noise_P1 = 64.295;
+InVIvo_leg_3_first10mins_noise_P2 = 55.934;
+
+%Leg  prelabeled vs in vivo labeled  noise
+allLegPrelabeledlNoise = [prelabeled_leg1_threshOf4.noise(1) prelabeled_leg2_threshOf4.noise(1) prelabeled_leg3_threshOf4.noise(1)];
+meanLegPrelabeledlNoise = mean(allLegPrelabeledlNoise);
+stdLegPrelabeledlNoise  = std(allLegPrelabeledlNoise);
+
+allLegInVivoLabeledNoise = [inVivo_leg1_threshOf4.noise(1) inVivo_leg2_threshOf4.noise(1) inVivo_leg3_threshOf4.noise(1)];
+meanLegInVivoLabeledNoise = mean(allLegInVivoLabeledNoise);
+stdLegInVivoLabeledNoise = std(allLegInVivoLabeledNoise);
+disp('Loading data and some calculations finshed without errors')
+%%%
+%Comparing count rate, false alarm rate vs threshold for the 3 OTL38 only control scans and the 3 L1210A in vivo labeling scans
+control_scan_1_threshOf4_arterial = 2;
+control_scan_1_threshOf4_venous = 2;
+control_scan_1_threshOf4_total_matched = control_scan_1_threshOf4_arterial + control_scan_1_threshOf4_venous;
+control_scan_1_threshOf4_total_matched_FAR = control_scan_1_threshOf4_total_matched/60;
+
+
+control_scan_2_threshOf4_arterial = 2;
+control_scan_2_threshOf4_venous = 3;
+control_scan_2_threshOf4_total_matched = control_scan_2_threshOf4_arterial + control_scan_2_threshOf4_venous;
+control_scan_2_threshOf4_total_matched_FAR = control_scan_2_threshOf4_total_matched/60;
+
+control_scan_3_threshOf4_arterial = 0;
+control_scan_3_threshOf4_venous = 0;
+control_scan_3_threshOf4_total_matched = control_scan_3_threshOf4_arterial + control_scan_3_threshOf4_venous;
+control_scan_3_threshOf4_total_matched_FAR = control_scan_3_threshOf4_total_matched/60;
+
+
+mean_control_scan_threshOf4_total_Matched_FAR = mean([control_scan_1_threshOf4_total_matched_FAR control_scan_2_threshOf4_total_matched_FAR control_scan_3_threshOf4_total_matched_FAR]);
+std_control_scan_threshOf4_total_Matched_FAR = std([control_scan_1_threshOf4_total_matched_FAR control_scan_2_threshOf4_total_matched_FAR control_scan_3_threshOf4_total_matched_FAR]);
+
+
+
+%L1210A in vivo labeling
+in_vivo_L1210A_1_threshOf4_arterial = 6;
+in_vivo_L1210A_1_threshOf4_venous = 26;
+in_vivo_L1210A_1_threshOf4_total_matched = in_vivo_L1210A_1_threshOf4_arterial + in_vivo_L1210A_1_threshOf4_venous;
+in_vivo_L1210A_1_threshOf4_total_matched_Peaks = in_vivo_L1210A_1_threshOf4_total_matched/60;
+
+in_vivo_L1210A_2_threshOf4_arterial = 27;
+in_vivo_L1210A_2_threshOf4_venous = 0;
+in_vivo_L1210A_2_threshOf4_total_matched = in_vivo_L1210A_2_threshOf4_arterial + in_vivo_L1210A_2_threshOf4_venous;
+in_vivo_L1210A_2_threshOf4_total_matched_Peaks = in_vivo_L1210A_2_threshOf4_total_matched/60;
+
+
+in_vivo_L1210A_3_threshOf4_arterial = 36;
+in_vivo_L1210A_3_threshOf4_venous = 13;
+in_vivo_L1210A_3_threshOf4_total_matched = in_vivo_L1210A_3_threshOf4_arterial + in_vivo_L1210A_3_threshOf4_venous;
+in_vivo_L1210A_3_threshOf4_total_matched_Peaks = in_vivo_L1210A_3_threshOf4_total_matched/60;
+
+
+mean_in_vivo_L1210A_scan_threshOf4_total_Matched_Peaks = mean([in_vivo_L1210A_1_threshOf4_total_matched_Peaks in_vivo_L1210A_2_threshOf4_total_matched_Peaks in_vivo_L1210A_3_threshOf4_total_matched_Peaks]);
+std_in_vivo_L1210A_scan_threshOf4_total_Matched_Peaks = std([in_vivo_L1210A_1_threshOf4_total_matched_Peaks in_vivo_L1210A_2_threshOf4_total_matched_Peaks in_vivo_L1210A_3_threshOf4_total_matched_Peaks]);
+
+
+%Looking at the matched count rates at a threshold of 4 for the no injection control, prelabeled L1210A
+no_injection_control_scan_1_threshOf4_arterial = 1;
+no_injection_control_scan_1_threshOf4_venous = 0;
+no_injection_control_scan_1_threshOf4_total_matched = no_injection_control_scan_1_threshOf4_arterial + no_injection_control_scan_1_threshOf4_venous;
+no_injection_control_scan_1_threshOf4_total_matched_FAR = no_injection_control_scan_1_threshOf4_total_matched/60;
+
+no_injection_control_scan_2_threshOf4_arterial = 1;
+no_injection_control_scan_2_threshOf4_venous = 0;
+no_injection_control_scan_2_threshOf4_total_matched = no_injection_control_scan_2_threshOf4_arterial + no_injection_control_scan_2_threshOf4_venous;
+no_injection_control_scan_2_threshOf4_total_matched_FAR = no_injection_control_scan_2_threshOf4_total_matched/60;
+
+no_injection_control_scan_3_threshOf4_arterial = 3;
+no_injection_control_scan_3_threshOf4_venous = 0;
+no_injection_control_scan_3_threshOf4_total_matched = no_injection_control_scan_3_threshOf4_arterial + no_injection_control_scan_3_threshOf4_venous;
+no_injection_control_scan_3_threshOf4_total_matched_FAR = no_injection_control_scan_3_threshOf4_total_matched/60;
+
+mean_no_injection_control_threshOf4_total_matched_FAR = mean([no_injection_control_scan_1_threshOf4_total_matched_FAR no_injection_control_scan_2_threshOf4_total_matched_FAR no_injection_control_scan_3_threshOf4_total_matched_FAR]);
+std_no_injection_control_threshOf4_total_matched_FAR = std([no_injection_control_scan_1_threshOf4_total_matched_FAR no_injection_control_scan_2_threshOf4_total_matched_FAR no_injection_control_scan_3_threshOf4_total_matched_FAR]);
+
+prelabeled_L1210A_scan_1_threshOf4_arterial = 110;
+prelabeled_L1210A_scan_1_threshOf4_venous = 301;
+prelabeled_L1210A_scan_1_threshOf4_total_matched = prelabeled_L1210A_scan_1_threshOf4_arterial + prelabeled_L1210A_scan_1_threshOf4_venous;
+prelabeled_L1210A_scan_1_threshOf4_total_matched_Count_Rate = prelabeled_L1210A_scan_1_threshOf4_total_matched/60;
+
+prelabeled_L1210A_scan_2_threshOf4_arterial = 201;
+prelabeled_L1210A_scan_2_threshOf4_venous = 133;
+prelabeled_L1210A_scan_2_threshOf4_total_matched = prelabeled_L1210A_scan_2_threshOf4_arterial + prelabeled_L1210A_scan_2_threshOf4_venous;
+prelabeled_L1210A_scan_2_threshOf4_total_matched_Count_Rate = prelabeled_L1210A_scan_2_threshOf4_total_matched/60;
+
+prelabeled_L1210A_scan_3_threshOf4_arterial = 145;
+prelabeled_L1210A_scan_3_threshOf4_venous = 14;
+prelabeled_L1210A_scan_3_threshOf4_total_matched = prelabeled_L1210A_scan_3_threshOf4_arterial + prelabeled_L1210A_scan_3_threshOf4_venous;
+prelabeled_L1210A_scan_3_threshOf4_total_matched_Count_Rate = prelabeled_L1210A_scan_3_threshOf4_total_matched/60;
+
+mean_prelabeled_L1210A_threshOf4_total_matched_Peaks = mean([ prelabeled_L1210A_scan_1_threshOf4_total_matched_Count_Rate prelabeled_L1210A_scan_2_threshOf4_total_matched_Count_Rate prelabeled_L1210A_scan_3_threshOf4_total_matched_Count_Rate]);
+std_prelabeled_L1210A_threshOf4_total_matched_Peaks = std([ prelabeled_L1210A_scan_1_threshOf4_total_matched_Count_Rate prelabeled_L1210A_scan_2_threshOf4_total_matched_Count_Rate prelabeled_L1210A_scan_3_threshOf4_total_matched_Count_Rate]);
+
+invivo_labeling_percentage = 0.299537;%Percentage of Q2 cells/Q1+Q2 from double checked flow cytometry data
+
+
+mean_estimated_in_vivo_count_rate= mean([(prelabeled_L1210A_scan_1_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage) (prelabeled_L1210A_scan_2_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage) (prelabeled_L1210A_scan_3_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage)]);
+std_estimated_in_vivo_count_rate = std([(prelabeled_L1210A_scan_1_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage) (prelabeled_L1210A_scan_2_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage) (prelabeled_L1210A_scan_3_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage)]);
+
+
+mean_estimated_in_vivo_count_rate= mean([(prelabeled_L1210A_scan_1_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage) (prelabeled_L1210A_scan_2_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage) (prelabeled_L1210A_scan_3_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage)]);
+std_estimated_in_vivo_count_rate = std([(prelabeled_L1210A_scan_1_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage) (prelabeled_L1210A_scan_2_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage) (prelabeled_L1210A_scan_3_threshOf4_total_matched_Count_Rate*invivo_labeling_percentage)]);
+
+disp("Thresholding calculations finished without errors")
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Calculations and combining datasets
+%%%%
+%OTL38 clearance calculations
+mouseControl_1 = load("DiFC_Files/Control_Nude_Mouse_Tail_2/Control_Nude_Mouse_Tail_2_proc_relThresh_5_5.mat");
+mouseControl_1Noise = mouseControl_1.noise(2);
+mouseControl_1Background = -mouseControl_1.data(2);
+
+mouseControl_2 = load("DiFC_Files/Control_Nude_Mouse_Tail_3/Control_Nude_Mouse_Tail_3_proc_relThresh_5_5.mat");
+mouseControl_2Noise = mouseControl_2.noise(2);
+mouseControl_2Background = -mouseControl_2.data(2);
+
+mouseControl_3 = load("DiFC_Files/20220223_Nude_Control_Tail/20220223_Nude_Control_Tail_proc_relThresh_5_5.mat");
+mouseControl_3Noise = mouseControl_3.noise(2);
+mouseControl_3Background = -mouseControl_3.data(2);
+
+%Mean and STD of mouse controls
+meanMouseNoise = mean([mouseControl_1Noise mouseControl_2Noise mouseControl_3Noise]);
+stdMouseNoise = std([mouseControl_1Noise mouseControl_2Noise mouseControl_3Noise]);
+
+meanMouseBackground = mean([mean(mouseControl_1Background) mean(mouseControl_2Background) mean(mouseControl_3Background)]);
+stdMouseBackground = std([mean(mouseControl_1Background) mean(mouseControl_2Background) mean(mouseControl_3Background)]);
+
+preOTL38Baseline = load('DiFC_Files/OTL38 Control 20220724/20220724_Baseline_Pre_2.5ug_OTL38_Tail/Processed_Data_and_Figures_relThresh_5_5/20220724_Baseline_Pre_2.5ug_OTL38_Tail_proc_relThresh_5_5.mat');
+preOTL38BaselineBackground = -preOTL38Baseline.data(:,2);
+preOTL38BaselineNoise = preOTL38Baseline.noise(2);
+
+postOTL38_3Hours = load('DiFC_Files/OTL38 Control 20220724/20220724_3hrs_Post_2.5ug_OTL38_Tail/Processed_Data_and_Figures_relThresh_5_5/20220724_3hrs_Post_2.5ug_OTL38_Tail_proc_relThresh_5_5.mat');
+postOTL38_3HoursBackground = -postOTL38_3Hours.data(:,2);
+postOTL38_3HoursNoise = postOTL38_3Hours.noise(2);
+
+postOTL38_6Hours = load('DiFC_Files/OTL38 Control 20220724/20220724_6hrs_Post_2.5ug_OTL38_Tail/Processed_Data_and_Figures_relThresh_5_5/20220724_6hrs_Post_2.5ug_OTL38_Tail_proc_relThresh_5_5.mat');
+postOTL38_6HoursBackground = -postOTL38_6Hours.data(:,2);
+postOTL38_6HoursNoise = postOTL38_6Hours.noise(1);%Using Probe 1 noise instead!!!!!!!
+
+postOTL38_9Hours = load('DiFC_Files/OTL38 Control 20220724/20220724_9hrs_Post_2.5ug_OTL38_Tail/Processed_Data_and_Figures_relThresh_5_5/20220724_9hrs_Post_2.5ug_OTL38_Tail_proc_relThresh_5_5.mat');
+postOTL38_9HoursBackground = -postOTL38_9Hours.data(:,2);
+postOTL38_9HoursNoise = postOTL38_9Hours.noise(2);
+
+postOTL38_12Hours = load('DiFC_Files/OTL38 Control 20220724/20220724_12hrs_Post_2.5ug_OTL38_Tail_Retape/Processed_Data_and_Figures_relThresh_5_5/20220724_12hrs_Post_2.5ug_OTL38_Tail_Retape_proc_relThresh_5_5.mat');
+postOTL38_12HoursBackground = -postOTL38_12Hours.data(:,2);
+postOTL38_12HoursNoise = postOTL38_12Hours.noise(2);
+
+postOTL38_24Hours = load('DiFC_Files/OTL38 Control 20220724/20220724_24hrs_Post_2.5ug_OTL38_Tail/Processed_Data_and_Figures_relThresh_5_5/20220724_24hrs_Post_2.5ug_OTL38_Tail_proc_relThresh_5_5.mat');
+postOTL38_24HoursBackground = -postOTL38_24Hours.data(:,2);
+postOTL38_24HoursNoise = postOTL38_24Hours.noise(2);
+
+postOTL38_24Hours_2 = load('DiFC_Files/OTL38 Control 20220724/20220724_24hrs_Post_2.5ug_OTL38_Tail_2/Processed_Data_and_Figures_relThresh_5_5/20220724_24hrs_Post_2.5ug_OTL38_Tail_2_proc_relThresh_5_5.mat');
+postOTL38_24_2HoursBackground = -postOTL38_24Hours_2.data(:,2);
+postOTL38_24_2HoursNoise = postOTL38_24Hours_2.noise(2);
+
+%OTL38 clearance scans (20220802) 
+
+preOTL38Baseline_2 = load('DiFC_Files/OTL38 Control 20220802/20220802_Baseline_Pre_2.5ug_OTL38_Tail/Processed_Data_and_Figures_relThresh_5_5/20220802_Baseline_Pre_2.5ug_OTL38_Tail_proc_relThresh_5_5.mat');
+preOTL38BaselineBackground_2 = -preOTL38Baseline_2.data(:,2);
+preOTL38BaselineNoise_2 = preOTL38Baseline_2.noise(2);
+
+postOTL38_3Hours_2 = load('DiFC_Files/OTL38 Control 20220802/20220802_3hrs_Post_2.5ug_OTL38_Tail/Processed_Data_and_Figures_relThresh_5_5/20220802_3hrs_Post_2.5ug_OTL38_Tail_proc_relThresh_5_5.mat');
+postOTL38_3HoursBackground_2 = -postOTL38_3Hours_2.data(:,2);
+postOTL38_3HoursNoise_2 = postOTL38_3Hours_2.noise(2);
+
+postOTL38_6Hours_2 = load('DiFC_Files/OTL38 Control 20220802/20220802_6hrs_Post_2.5ug_OTL38_Tail/Processed_Data_and_Figures_relThresh_5_5/20220802_6hrs_Post_2.5ug_OTL38_Tail_proc_relThresh_5_5.mat');
+postOTL38_6HoursBackground_2 = -postOTL38_6Hours_2.data(:,2);
+postOTL38_6HoursNoise_2 = postOTL38_6Hours_2.noise(2);
+
+postOTL38_9Hours_2 = load('DiFC_Files/OTL38 Control 20220802/20220802_9hrs_Post_2.5ug_OTL38_Tail/Processed_Data_and_Figures_relThresh_5_5/20220802_9hrs_Post_2.5ug_OTL38_Tail_proc_relThresh_5_5.mat');
+postOTL38_9HoursBackground_2 = -postOTL38_9Hours_2.data(:,2);
+postOTL38_9HoursNoise_2 = postOTL38_9Hours_2.noise(2);
+
+postOTL38_12Hours_2 = load('DiFC_Files/OTL38 Control 20220802/20220802_12hrs_Post_2.5ug_OTL38_Tail/Processed_Data_and_Figures_relThresh_5_5/20220802_12hrs_Post_2.5ug_OTL38_Tail_proc_relThresh_5_5.mat');
+postOTL38_12HoursBackground_2 = -postOTL38_12Hours_2.data(:,2);
+postOTL38_12HoursNoise_2 = postOTL38_12Hours_2.noise(2);
+
+postOTL38_24Hours_2nd = load('DiFC_Files/OTL38 Control 20220802/20220802_24hrs_Post_2.5ug_OTL38_Tail/Processed_Data_and_Figures_relThresh_5_5/20220802_24hrs_Post_2.5ug_OTL38_Tail_proc_relThresh_5_5.mat');
+postOTL38_24HoursBackground_2 = -postOTL38_24Hours_2nd.data(:,2);
+postOTL38_24HoursNoise_2 = postOTL38_24Hours_2nd.noise(2);
+
+%OTL38 clearance scans (20220805) 
+preOTL38Baseline_3 = load('DiFC_Files/OTL38 Control 20220805/20220805_Baseline_Pre_2.5ug_OTL38_Tail/20220805_Baseline_Pre_2.5ug_OTL38_Tail_second_10min/Processed_Data_and_Figures_relThresh_5_5/20220805_Baseline_Pre_2.5ug_OTL38_Tail_second_10min_proc_relThresh_5_5.mat');
+preOTL38BaselineBackground_3 = -preOTL38Baseline_3.data(:,2);
+preOTL38BaselineNoise_3 = preOTL38Baseline_3.noise(2);
+
+postOTL38_3Hours_3 = load('DiFC_Files/OTL38 Control 20220805/20220805_3hrs_Post_2.5ug_OTL38_Tail/20220805_3hrs_Post_2.5ug_OTL38_Tail_second_10min/Processed_Data_and_Figures_relThresh_5_5/20220805_3hrs_Post_2.5ug_OTL38_Tail_second_10min_proc_relThresh_5_5.mat');
+postOTL38_3HoursBackground_3 = -postOTL38_3Hours_3.data(:,1);
+postOTL38_3HoursNoise_3 = postOTL38_3Hours_3.noise(1);
+
+postOTL38_6Hours_3 = load('DiFC_Files/OTL38 Control 20220805/20220805_6hrs_Post_2.5ug_OTL38_Tail/20220805_6hrs_Post_2.5ug_OTL38_Tail_second_10mins/Processed_Data_and_Figures_relThresh_5_5/20220805_6hrs_Post_2.5ug_OTL38_Tail_second_10mins_proc_relThresh_5_5.mat');
+postOTL38_6HoursBackground_3 = -postOTL38_6Hours_3.data(:,1);
+postOTL38_6HoursNoise_3 = postOTL38_6Hours_3.noise(1);
+
+postOTL38_9Hours_3 = load('DiFC_Files/OTL38 Control 20220805/20220805_9hrs_Post_2.5ug_OTL38_Tail/20220805_9hrs_Post_2.5ug_OTL38_Tail_first_10min/Processed_Data_and_Figures_relThresh_5_5/20220805_9hrs_Post_2.5ug_OTL38_Tail_first_10min_proc_relThresh_5_5.mat');
+postOTL38_9HoursBackground_3 = -postOTL38_9Hours_3.data(:,1);
+postOTL38_9HoursNoise_3 = postOTL38_9Hours_3.noise(1);
+
+postOTL38_12Hours_3 = load('DiFC_Files/OTL38 Control 20220805/20220805_12hrs_Post_2.5ug_OTL38_Tail/20220805_12hrs_Post_2.5ug_OTL38_Tail_second_10min/Processed_Data_and_Figures_relThresh_5_5/20220805_12hrs_Post_2.5ug_OTL38_Tail_second_10min_proc_relThresh_5_5.mat');
+postOTL38_12HoursBackground_3 = -postOTL38_12Hours_3.data(:,1);
+postOTL38_12HoursNoise_3 = postOTL38_12Hours_3.noise(1);
+
+postOTL38_24Hours_3 = load('DiFC_Files/OTL38 Control 20220805/20220805_24hrs_Post_2.5ug_OTL38_Tail/20220805_24hrs_Post_2.5ug_OTL38_Tail_second_10min/Processed_Data_and_Figures_relThresh_5_5/20220805_24hrs_Post_2.5ug_OTL38_Tail_second_10min_proc_relThresh_5_5.mat');
+postOTL38_24HoursBackground_3 = -postOTL38_24Hours_3.data(:,2);
+postOTL38_24HoursNoise_3 = postOTL38_24Hours_3.noise(2);
+
+postOTL38_3HoursNoiseRatio = postOTL38_3HoursNoise/preOTL38BaselineNoise;
+postOTL38_3HoursBackgroundRatio = mean(postOTL38_3HoursBackground)/mean(preOTL38BaselineBackground);
+
+
+postOTL38_6HoursNoiseRatio = postOTL38_6HoursNoise/preOTL38BaselineNoise;
+postOTL38_6HoursBackgroundRatio = mean(postOTL38_6HoursBackground)/mean(preOTL38BaselineBackground);
+
+postOTL38_9HoursNoiseRatio = postOTL38_9HoursNoise/preOTL38BaselineNoise;
+postOTL38_9HoursBackgroundRatio = mean(postOTL38_9HoursBackground)/mean(preOTL38BaselineBackground);
+
+postOTL38_12HoursNoiseRatio = postOTL38_12HoursNoise/preOTL38BaselineNoise;
+postOTL38_12HoursBackgroundRatio = mean(postOTL38_12HoursBackground)/mean(preOTL38BaselineBackground);
+
+postOTL38_24_2HoursNoiseRatio = postOTL38_24_2HoursNoise/preOTL38BaselineNoise;
+postOTL38_24_2HoursBackgroundRatio = mean(postOTL38_24_2HoursBackground)/mean(preOTL38BaselineBackground);
+
+%OTL38 Clearance over time calculations (second scan)
+postOTL38_3HoursNoiseRatio_2 = postOTL38_3HoursNoise_2/preOTL38BaselineNoise_2;
+postOTL38_3HoursBackgroundRatio_2 = mean(postOTL38_3HoursBackground_2)/mean(preOTL38BaselineBackground_2);
+
+
+postOTL38_6HoursNoiseRatio_2 = postOTL38_6HoursNoise_2/preOTL38BaselineNoise_2;
+postOTL38_6HoursBackgroundRatio_2 = mean(postOTL38_6HoursBackground_2)/mean(preOTL38BaselineBackground_2);
+
+postOTL38_9HoursNoiseRatio_2 = postOTL38_9HoursNoise_2/preOTL38BaselineNoise_2;
+postOTL38_9HoursBackgroundRatio_2 = mean(postOTL38_9HoursBackground_2)/mean(preOTL38BaselineBackground_2);
+
+postOTL38_12HoursNoiseRatio_2 = postOTL38_12HoursNoise_2/preOTL38BaselineNoise_2;
+postOTL38_12HoursBackgroundRatio_2 = mean(postOTL38_12HoursBackground_2)/mean(preOTL38BaselineBackground_2);
+
+postOTL38_24HoursNoiseRatio_2 = postOTL38_24HoursNoise_2/preOTL38BaselineNoise_2;
+postOTL38_24HoursBackgroundRatio_2 = mean(postOTL38_24HoursBackground_2)/mean(preOTL38BaselineBackground_2);
+
+%OTL38 Clearance over time calculations (third scan)
+postOTL38_3HoursNoiseRatio_3 = postOTL38_3HoursNoise_3/preOTL38BaselineNoise_3;
+postOTL38_3HoursBackgroundRatio_3 = mean(postOTL38_3HoursBackground_3)/mean(preOTL38BaselineBackground_3);
+
+
+postOTL38_6HoursNoiseRatio_3 = postOTL38_6HoursNoise_3/preOTL38BaselineNoise_3;
+postOTL38_6HoursBackgroundRatio_3 = mean(postOTL38_6HoursBackground_3)/mean(preOTL38BaselineBackground_3);
+
+postOTL38_9HoursNoiseRatio_3 = postOTL38_9HoursNoise_3/preOTL38BaselineNoise_3;
+postOTL38_9HoursBackgroundRatio_3 = mean(postOTL38_9HoursBackground_3)/mean(preOTL38BaselineBackground_3);
+
+postOTL38_12HoursNoiseRatio_3 = postOTL38_12HoursNoise_3/preOTL38BaselineNoise_3;
+postOTL38_12HoursBackgroundRatio_3 = mean(postOTL38_12HoursBackground_3)/mean(preOTL38BaselineBackground_3);
+
+postOTL38_24HoursNoiseRatio_3 = postOTL38_24HoursNoise_3/preOTL38BaselineNoise_3;
+postOTL38_24HoursBackgroundRatio_3 = mean(postOTL38_24HoursBackground_3)/mean(preOTL38BaselineBackground_3);
+
+%Finding the average and std of the 3 mice for the OTL38 clearance scans
+meanPostOTL38_3HoursBackgroundRatio = mean([postOTL38_3HoursBackgroundRatio postOTL38_3HoursBackgroundRatio_2 postOTL38_3HoursBackgroundRatio_3]); 
+stdPostOTL38_3HoursBackgroundRatio = std([postOTL38_3HoursBackgroundRatio postOTL38_3HoursBackgroundRatio_2 postOTL38_3HoursBackgroundRatio_3]); 
+
+meanPostOTL38_6HoursBackgroundRatio = mean([postOTL38_6HoursBackgroundRatio postOTL38_6HoursBackgroundRatio_2 postOTL38_6HoursBackgroundRatio_3]);
+stdPostOTL38_6HoursBackgroundRatio = std([postOTL38_6HoursBackgroundRatio postOTL38_6HoursBackgroundRatio_2 postOTL38_6HoursBackgroundRatio_3]);
+
+meanPostOTL38_9HoursBackgroundRatio = mean([postOTL38_9HoursBackgroundRatio postOTL38_9HoursBackgroundRatio_2 postOTL38_9HoursBackgroundRatio_3]);
+stdPostOTL38_9HoursBackgroundRatio = std([postOTL38_9HoursBackgroundRatio postOTL38_9HoursBackgroundRatio_2 postOTL38_9HoursBackgroundRatio_3]);
+
+meanPostOTL38_12HoursBackgroundRatio = mean([postOTL38_12HoursBackgroundRatio postOTL38_12HoursBackgroundRatio_2 postOTL38_12HoursBackgroundRatio_3]);
+stdPostOTL38_12HoursBackgroundRatio = std([postOTL38_12HoursBackgroundRatio postOTL38_12HoursBackgroundRatio_2 postOTL38_12HoursBackgroundRatio_3]);
+
+meanPostOTL38_24HoursBackgroundRatio = mean([postOTL38_24_2HoursBackgroundRatio postOTL38_24HoursBackgroundRatio_2 postOTL38_24HoursBackgroundRatio_3]);
+stdPostOTL38_24HoursBackgroundRatio = std([postOTL38_24_2HoursBackgroundRatio postOTL38_24HoursBackgroundRatio_2 postOTL38_24HoursBackgroundRatio_3]);
+
+meanPostOTL38_3HoursNoiseRatio = mean([postOTL38_3HoursNoiseRatio postOTL38_3HoursNoiseRatio_2 postOTL38_3HoursNoiseRatio_3]);
+stdPostOTL38_3HoursNoiseRatio = std([postOTL38_3HoursNoiseRatio postOTL38_3HoursNoiseRatio_2 postOTL38_3HoursNoiseRatio_3]);
+
+meanPostOTL38_6HoursNoiseRatio = mean([postOTL38_6HoursNoiseRatio postOTL38_6HoursNoiseRatio_2 postOTL38_6HoursNoiseRatio_3]);
+stdPostOTL38_6HoursNoiseRatio = std([postOTL38_6HoursNoiseRatio postOTL38_6HoursNoiseRatio_2 postOTL38_6HoursNoiseRatio_3]);
+
+meanPostOTL38_9HoursNoiseRatio = mean([postOTL38_9HoursNoiseRatio postOTL38_9HoursNoiseRatio_2 postOTL38_9HoursNoiseRatio_3]);
+stdPostOTL38_9HoursNoiseRatio = std([postOTL38_9HoursNoiseRatio postOTL38_9HoursNoiseRatio_2 postOTL38_9HoursNoiseRatio_3]);
+
+meanPostOTL38_12HoursNoiseRatio = mean([postOTL38_12HoursNoiseRatio postOTL38_12HoursNoiseRatio_2 postOTL38_12HoursNoiseRatio_3]);
+stdPostOTL38_12HoursNoiseRatio = std([postOTL38_12HoursNoiseRatio postOTL38_12HoursNoiseRatio_2 postOTL38_12HoursNoiseRatio_3]);
+
+meanPostOTL38_24HoursNoiseRatio = mean([postOTL38_24_2HoursNoiseRatio postOTL38_24HoursNoiseRatio_2 postOTL38_24HoursNoiseRatio_3]);
+stdPostOTL38_24HoursNoiseRatio = std([postOTL38_24_2HoursNoiseRatio postOTL38_24HoursNoiseRatio_2 postOTL38_24HoursNoiseRatio_3]);
+
+%Calculating noise and background for different time points post OTL38 clearance for the original mouse control scans (using each background ratio (control mouse 1 -> OTL38 mouse 1 etc.)
+[controlMouse1Noise3HoursPostOTL38,controlMouse1Background3HoursPostOTL38] = getBackgroundAndNoise(mouseControl_1.data,postOTL38_3HoursBackgroundRatio);
+[controlMouse2Noise3HoursPostOTL38,controlMouse2Background3HoursPostOTL38] = getBackgroundAndNoise(mouseControl_2.data,postOTL38_3HoursBackgroundRatio_2);
+[controlMouse3Noise3HoursPostOTL38,controlMouse3Background3HoursPostOTL38] = getBackgroundAndNoise(mouseControl_3.data,postOTL38_3HoursBackgroundRatio_3);
+meanControlMouseNoise3HoursPostOTL38 = mean([controlMouse1Noise3HoursPostOTL38(2) controlMouse2Noise3HoursPostOTL38(2) controlMouse3Noise3HoursPostOTL38(2)]); %Probe 2
+stdControlMouseNoise3HoursPostOTL38 = std([controlMouse1Noise3HoursPostOTL38(2) controlMouse2Noise3HoursPostOTL38(2) controlMouse3Noise3HoursPostOTL38(2)]); %Probe 2
+meanControlMouseBackground3HoursPostOTL38 = mean([controlMouse1Background3HoursPostOTL38(2) controlMouse2Background3HoursPostOTL38(2) controlMouse3Background3HoursPostOTL38(2)]);
+stdControlMouseBackground3HoursPostOTL38 = std([controlMouse1Background3HoursPostOTL38(2) controlMouse2Background3HoursPostOTL38(2) controlMouse3Background3HoursPostOTL38(2)]);
+
+controlMouse1CalculatedNoise3HoursRatio = controlMouse1Noise3HoursPostOTL38(2)/mouseControl_1Noise;
+controlMouse2CalculatedNoise3HoursRatio = controlMouse2Noise3HoursPostOTL38(2)/mouseControl_2Noise;
+controlMouse3CalculatedNoise3HoursRatio = controlMouse3Noise3HoursPostOTL38(2)/mouseControl_3Noise;
+meanControlMouseCaculatedNoise3HoursPostOTL38Ratio = mean([controlMouse1CalculatedNoise3HoursRatio controlMouse2CalculatedNoise3HoursRatio controlMouse3CalculatedNoise3HoursRatio]);
+stdControlMouseCaculatedNoise3HoursPostOTL38Ratio = std([controlMouse1CalculatedNoise3HoursRatio controlMouse2CalculatedNoise3HoursRatio controlMouse3CalculatedNoise3HoursRatio]);
+
+controlMouse1CalculatedBackground3HoursRatio = mean(controlMouse1Background3HoursPostOTL38(2))/mouseControl_1Background;
+controlMouse2CalculatedBackground3HoursRatio = mean(controlMouse2Background3HoursPostOTL38(2))/mouseControl_2Background;
+controlMouse3CalculatedBackground3HoursRatio = mean(controlMouse3Background3HoursPostOTL38(2))/mouseControl_3Background;
+meanControlMouseCaculatedBackground3HoursPostOTL38Ratio = mean([controlMouse1CalculatedBackground3HoursRatio controlMouse2CalculatedBackground3HoursRatio controlMouse3CalculatedBackground3HoursRatio]);
+stdControlMouseCaculatedBackground3HoursPostOTL38Ratio = std([controlMouse1CalculatedBackground3HoursRatio controlMouse2CalculatedBackground3HoursRatio controlMouse3CalculatedBackground3HoursRatio]);
+
+
+[controlMouse1Noise6HoursPostOTL38,controlMouse1Background6HoursPostOTL38] = getBackgroundAndNoise(mouseControl_1.data,postOTL38_6HoursBackgroundRatio);
+[controlMouse2Noise6HoursPostOTL38,controlMouse2Background6HoursPostOTL38] = getBackgroundAndNoise(mouseControl_2.data,postOTL38_6HoursBackgroundRatio_2);
+[controlMouse3Noise6HoursPostOTL38,controlMouse3Background6HoursPostOTL38] = getBackgroundAndNoise(mouseControl_3.data,postOTL38_6HoursBackgroundRatio_3);
+meanControlMouseNoise6HoursPostOTL38 = mean([controlMouse1Noise6HoursPostOTL38(2) controlMouse2Noise6HoursPostOTL38(2) controlMouse3Noise6HoursPostOTL38(2)]);
+stdControlMouseNoise6HoursPostOTL38 = std([controlMouse1Noise6HoursPostOTL38(2) controlMouse2Noise6HoursPostOTL38(2) controlMouse3Noise6HoursPostOTL38(2)]);
+meanControlMouseNoise6HoursPostOTL38Ratio = meanControlMouseNoise6HoursPostOTL38/meanMouseNoise;
+meanControlMouseBackground6HoursPostOTL38 = mean([controlMouse1Background6HoursPostOTL38(2) controlMouse2Background6HoursPostOTL38(2) controlMouse3Background6HoursPostOTL38(2)]);
+stdControlMouseBackground6HoursPostOTL38 = std([controlMouse1Background6HoursPostOTL38(2) controlMouse2Background6HoursPostOTL38(2) controlMouse3Background6HoursPostOTL38(2)]);
+
+controlMouse1CalculatedNoise6HoursRatio = controlMouse1Noise6HoursPostOTL38(2)/mouseControl_1Noise;
+controlMouse2CalculatedNoise6HoursRatio = controlMouse2Noise6HoursPostOTL38(2)/mouseControl_2Noise;
+controlMouse3CalculatedNoise6HoursRatio = controlMouse3Noise6HoursPostOTL38(2)/mouseControl_3Noise;
+meanControlMouseCaculatedNoise6HoursPostOTL38Ratio = mean([controlMouse1CalculatedNoise6HoursRatio controlMouse2CalculatedNoise6HoursRatio controlMouse3CalculatedNoise6HoursRatio]);
+stdControlMouseCaculatedNoise6HoursPostOTL38Ratio = std([controlMouse1CalculatedNoise6HoursRatio controlMouse2CalculatedNoise6HoursRatio controlMouse3CalculatedNoise6HoursRatio]);
+
+controlMouse1CalculatedBackground6HoursRatio = mean(controlMouse1Background6HoursPostOTL38(2))/mouseControl_1Background;
+controlMouse2CalculatedBackground6HoursRatio = mean(controlMouse2Background6HoursPostOTL38(2))/mouseControl_2Background;
+controlMouse3CalculatedBackground6HoursRatio = mean(controlMouse3Background6HoursPostOTL38(2))/mouseControl_3Background;
+meanControlMouseCaculatedBackground6HoursPostOTL38Ratio = mean([controlMouse1CalculatedBackground6HoursRatio controlMouse2CalculatedBackground6HoursRatio controlMouse3CalculatedBackground6HoursRatio]);
+stdControlMouseCaculatedBackground6HoursPostOTL38Ratio = std([controlMouse1CalculatedBackground6HoursRatio controlMouse2CalculatedBackground6HoursRatio controlMouse3CalculatedBackground6HoursRatio]);
+
+
+[controlMouse1Noise9HoursPostOTL38,controlMouse1Background9HoursPostOTL38] = getBackgroundAndNoise(mouseControl_1.data,postOTL38_9HoursBackgroundRatio);
+[controlMouse2Noise9HoursPostOTL38,controlMouse2Background9HoursPostOTL38] = getBackgroundAndNoise(mouseControl_2.data,postOTL38_9HoursBackgroundRatio_2);
+[controlMouse3Noise9HoursPostOTL38,controlMouse3Background9HoursPostOTL38] = getBackgroundAndNoise(mouseControl_3.data,postOTL38_9HoursBackgroundRatio_3);
+meanControlMouseNoise9HoursPostOTL38 = mean([controlMouse1Noise9HoursPostOTL38(2) controlMouse2Noise9HoursPostOTL38(2) controlMouse3Noise9HoursPostOTL38(2)]);
+stdControlMouseNoise9HoursPostOTL38 = std([controlMouse1Noise9HoursPostOTL38(2) controlMouse2Noise9HoursPostOTL38(2) controlMouse3Noise9HoursPostOTL38(2)]);
+meanControlMouseNoise9HoursPostOTL38Ratio = meanControlMouseNoise9HoursPostOTL38/meanMouseNoise;
+meanControlMouseBackground9HoursPostOTL38 = mean([controlMouse1Background9HoursPostOTL38(2) controlMouse2Background9HoursPostOTL38(2) controlMouse3Background9HoursPostOTL38(2)]);
+stdControlMouseBackground9HoursPostOTL38 = std([controlMouse1Background9HoursPostOTL38(2) controlMouse2Background9HoursPostOTL38(2) controlMouse3Background9HoursPostOTL38(2)]);
+
+controlMouse1CalculatedNoise9HoursRatio = controlMouse1Noise9HoursPostOTL38(2)/mouseControl_1Noise;
+controlMouse2CalculatedNoise9HoursRatio = controlMouse2Noise9HoursPostOTL38(2)/mouseControl_2Noise;
+controlMouse3CalculatedNoise9HoursRatio = controlMouse3Noise9HoursPostOTL38(2)/mouseControl_3Noise;
+meanControlMouseCaculatedNoise9HoursPostOTL38Ratio = mean([controlMouse1CalculatedNoise9HoursRatio controlMouse2CalculatedNoise9HoursRatio controlMouse3CalculatedNoise9HoursRatio]);
+stdControlMouseCaculatedNoise9HoursPostOTL38Ratio = std([controlMouse1CalculatedNoise9HoursRatio controlMouse2CalculatedNoise9HoursRatio controlMouse3CalculatedNoise9HoursRatio]);
+
+controlMouse1CalculatedBackground9HoursRatio = mean(controlMouse1Background9HoursPostOTL38(2))/mouseControl_1Background;
+controlMouse2CalculatedBackground9HoursRatio = mean(controlMouse2Background9HoursPostOTL38(2))/mouseControl_2Background;
+controlMouse3CalculatedBackground9HoursRatio = mean(controlMouse3Background9HoursPostOTL38(2))/mouseControl_3Background;
+meanControlMouseCaculatedBackground9HoursPostOTL38Ratio = mean([controlMouse1CalculatedBackground9HoursRatio controlMouse2CalculatedBackground9HoursRatio controlMouse3CalculatedBackground9HoursRatio]);
+stdControlMouseCaculatedBackground9HoursPostOTL38Ratio = std([controlMouse1CalculatedBackground9HoursRatio controlMouse2CalculatedBackground9HoursRatio controlMouse3CalculatedBackground9HoursRatio]);
+
+[controlMouse1Noise12HoursPostOTL38,controlMouse1Background12HoursPostOTL38] = getBackgroundAndNoise(mouseControl_1.data,postOTL38_12HoursBackgroundRatio);
+[controlMouse2Noise12HoursPostOTL38,controlMouse2Background12HoursPostOTL38] = getBackgroundAndNoise(mouseControl_2.data,postOTL38_12HoursBackgroundRatio_2);
+[controlMouse3Noise12HoursPostOTL38,controlMouse3Background12HoursPostOTL38] = getBackgroundAndNoise(mouseControl_3.data,postOTL38_12HoursBackgroundRatio_3);
+meanControlMouseNoise12HoursPostOTL38 = mean([controlMouse1Noise12HoursPostOTL38(2) controlMouse2Noise12HoursPostOTL38(2) controlMouse3Noise12HoursPostOTL38(2)]);
+stdControlMouseNoise12HoursPostOTL38 = std([controlMouse1Noise12HoursPostOTL38(2) controlMouse2Noise12HoursPostOTL38(2) controlMouse3Noise12HoursPostOTL38(2)]);
+meanControlMouseNoise12HoursPostOTL38Ratio = meanControlMouseNoise12HoursPostOTL38/meanMouseNoise;
+meanControlMouseBackground12HoursPostOTL38 = mean([controlMouse1Background12HoursPostOTL38(2) controlMouse2Background12HoursPostOTL38(2) controlMouse3Background12HoursPostOTL38(2)]);
+stdControlMouseBackground12HoursPostOTL38 = std([controlMouse1Background12HoursPostOTL38(2) controlMouse2Background12HoursPostOTL38(2) controlMouse3Background12HoursPostOTL38(2)]);
+
+controlMouse1CalculatedNoise12HoursRatio = controlMouse1Noise12HoursPostOTL38(2)/mouseControl_1Noise;
+controlMouse2CalculatedNoise12HoursRatio = controlMouse2Noise12HoursPostOTL38(2)/mouseControl_2Noise;
+controlMouse3CalculatedNoise12HoursRatio = controlMouse3Noise12HoursPostOTL38(2)/mouseControl_3Noise;
+meanControlMouseCaculatedNoise12HoursPostOTL38Ratio = mean([controlMouse1CalculatedNoise12HoursRatio controlMouse2CalculatedNoise12HoursRatio controlMouse3CalculatedNoise12HoursRatio]);
+stdControlMouseCaculatedNoise12HoursPostOTL38Ratio = std([controlMouse1CalculatedNoise12HoursRatio controlMouse2CalculatedNoise12HoursRatio controlMouse3CalculatedNoise12HoursRatio]);
+
+controlMouse1CalculatedBackground12HoursRatio = mean(controlMouse1Background12HoursPostOTL38(2))/mouseControl_1Background;
+controlMouse2CalculatedBackground12HoursRatio = mean(controlMouse2Background12HoursPostOTL38(2))/mouseControl_2Background;
+controlMouse3CalculatedBackground12HoursRatio = mean(controlMouse3Background12HoursPostOTL38(2))/mouseControl_3Background;
+meanControlMouseCaculatedBackground12HoursPostOTL38Ratio = mean([controlMouse1CalculatedBackground12HoursRatio controlMouse2CalculatedBackground12HoursRatio controlMouse3CalculatedBackground12HoursRatio]);
+stdControlMouseCaculatedBackground12HoursPostOTL38Ratio = std([controlMouse1CalculatedBackground12HoursRatio controlMouse2CalculatedBackground12HoursRatio controlMouse3CalculatedBackground12HoursRatio]);
+
+[controlMouse1Noise24HoursPostOTL38,controlMouse1Background24HoursPostOTL38] = getBackgroundAndNoise(mouseControl_1.data,postOTL38_24_2HoursBackgroundRatio);
+[controlMouse2Noise24HoursPostOTL38,controlMouse2Background24HoursPostOTL38] = getBackgroundAndNoise(mouseControl_2.data,postOTL38_24HoursBackgroundRatio_2);
+[controlMouse3Noise24HoursPostOTL38,controlMouse3Background24HoursPostOTL38] = getBackgroundAndNoise(mouseControl_3.data,postOTL38_24HoursBackgroundRatio_3);
+meanControlMouseNoise24HoursPostOTL38 = mean([controlMouse1Noise24HoursPostOTL38(2) controlMouse2Noise24HoursPostOTL38(2) controlMouse3Noise24HoursPostOTL38(2)]);
+stdControlMouseNoise24HoursPostOTL38 = std([controlMouse1Noise24HoursPostOTL38(2) controlMouse2Noise24HoursPostOTL38(2) controlMouse3Noise24HoursPostOTL38(2)]);
+meanControlMouseNoise24_2HoursPostOTL38Ratio = meanControlMouseNoise24HoursPostOTL38/meanMouseNoise;
+meanControlMouseBackground24HoursPostOTL38 = mean([controlMouse1Background24HoursPostOTL38(2) controlMouse2Background24HoursPostOTL38(2) controlMouse3Background24HoursPostOTL38(2)]);
+stdControlMouseBackground24HoursPostOTL38 = std([controlMouse1Background24HoursPostOTL38(2) controlMouse2Background24HoursPostOTL38(2) controlMouse3Background24HoursPostOTL38(2)]);
+
+controlMouse1CalculatedNoise24HoursRatio = controlMouse1Noise24HoursPostOTL38(2)/mouseControl_1Noise;
+controlMouse2CalculatedNoise24HoursRatio = controlMouse2Noise24HoursPostOTL38(2)/mouseControl_2Noise;
+controlMouse3CalculatedNoise24HoursRatio = controlMouse3Noise24HoursPostOTL38(2)/mouseControl_3Noise;
+meanControlMouseCaculatedNoise24HoursPostOTL38Ratio = mean([controlMouse1CalculatedNoise24HoursRatio controlMouse2CalculatedNoise24HoursRatio controlMouse3CalculatedNoise24HoursRatio]);
+stdControlMouseCaculatedNoise24HoursPostOTL38Ratio = std([controlMouse1CalculatedNoise24HoursRatio controlMouse2CalculatedNoise24HoursRatio controlMouse3CalculatedNoise24HoursRatio]);
+
+controlMouse1CalculatedBackground24HoursRatio = mean(controlMouse1Background24HoursPostOTL38(2))/mouseControl_1Background;
+controlMouse2CalculatedBackground24HoursRatio = mean(controlMouse2Background24HoursPostOTL38(2))/mouseControl_2Background;
+controlMouse3CalculatedBackground24HoursRatio = mean(controlMouse3Background24HoursPostOTL38(2))/mouseControl_3Background;
+meanControlMouseCaculatedBackground24HoursPostOTL38Ratio = mean([controlMouse1CalculatedBackground24HoursRatio controlMouse2CalculatedBackground24HoursRatio controlMouse3CalculatedBackground24HoursRatio]);
+stdControlMouseCaculatedBackground24HoursPostOTL38Ratio = std([controlMouse1CalculatedBackground24HoursRatio controlMouse2CalculatedBackground24HoursRatio controlMouse3CalculatedBackground24HoursRatio]);
+%Calculating noise for each of the OTL38 mice at the different time points using the ratio of the higher background and the baseline scan (since it is stable, I want to show the noise and backgkround correlate if scan is stable) 
+[OTL38Mouse1CalculatedNoise3Hours, OTL38Mouse1CalculatedBackground3Hours] = getBackgroundAndNoise(preOTL38Baseline.data,meanPostOTL38_3HoursBackgroundRatio);
+[OTL38Mouse2CalculatedNoise3Hours, OTL38Mouse2CalculatedBackground3Hours] = getBackgroundAndNoise(preOTL38Baseline_2.data,meanPostOTL38_3HoursBackgroundRatio);
+[OTL38Mouse3CalculatedNoise3Hours, OTL38Mouse3CalculatedBackground3Hours] = getBackgroundAndNoise(preOTL38Baseline_3.data,meanPostOTL38_3HoursBackgroundRatio);
+OTL38Mouse1CalculatedNoise3HoursRatio = OTL38Mouse1CalculatedNoise3Hours/preOTL38BaselineNoise;
+OTL38Mouse2CalculatedNoise3HoursRatio = OTL38Mouse2CalculatedNoise3Hours/preOTL38BaselineNoise_2;
+OTL38Mouse3CalculatedNoise3HoursRatio = OTL38Mouse3CalculatedNoise3Hours/preOTL38BaselineNoise_3;
+meanOTL38MiceCalculatedNoise3HourRatio = mean([OTL38Mouse1CalculatedNoise3HoursRatio(2) OTL38Mouse2CalculatedNoise3HoursRatio(2) OTL38Mouse3CalculatedNoise3HoursRatio(2)]);
+stdOTL38MiceCalculatedNoise3HourRatio = std([OTL38Mouse1CalculatedNoise3HoursRatio(2) OTL38Mouse2CalculatedNoise3HoursRatio(2) OTL38Mouse3CalculatedNoise3HoursRatio(2)]);
+
+[OTL38Mouse1CalculatedNoise6Hours, OTL38Mouse1CalculatedBackground6Hours] = getBackgroundAndNoise(preOTL38Baseline.data,meanPostOTL38_6HoursBackgroundRatio);
+[OTL38Mouse2CalculatedNoise6Hours, OTL38Mouse2CalculatedBackground6Hours] = getBackgroundAndNoise(preOTL38Baseline_2.data,meanPostOTL38_6HoursBackgroundRatio);
+[OTL38Mouse3CalculatedNoise6Hours, OTL38Mouse3CalculatedBackground6Hours] = getBackgroundAndNoise(preOTL38Baseline_3.data,meanPostOTL38_6HoursBackgroundRatio);
+OTL38Mouse1CalculatedNoise6HoursRatio = OTL38Mouse1CalculatedNoise6Hours/preOTL38BaselineNoise;
+OTL38Mouse2CalculatedNoise6HoursRatio = OTL38Mouse2CalculatedNoise6Hours/preOTL38BaselineNoise_2;
+OTL38Mouse3CalculatedNoise6HoursRatio = OTL38Mouse3CalculatedNoise6Hours/preOTL38BaselineNoise_3;
+meanOTL38MiceCalculatedNoise6HourRatio = mean([OTL38Mouse1CalculatedNoise6HoursRatio(2) OTL38Mouse2CalculatedNoise6HoursRatio(2) OTL38Mouse3CalculatedNoise6HoursRatio(2)]);
+stdOTL38MiceCalculatedNoise6HourRatio = std([OTL38Mouse1CalculatedNoise6HoursRatio(2) OTL38Mouse2CalculatedNoise6HoursRatio(2) OTL38Mouse3CalculatedNoise6HoursRatio(2)]);
+
+[OTL38Mouse1CalculatedNoise9Hours, OTL38Mouse1CalculatedBackground9Hours] = getBackgroundAndNoise(preOTL38Baseline.data,meanPostOTL38_9HoursBackgroundRatio);
+[OTL38Mouse2CalculatedNoise9Hours, OTL38Mouse2CalculatedBackground9Hours] = getBackgroundAndNoise(preOTL38Baseline_2.data,meanPostOTL38_9HoursBackgroundRatio);
+[OTL38Mouse3CalculatedNoise9Hours, OTL38Mouse3CalculatedBackground9Hours] = getBackgroundAndNoise(preOTL38Baseline_3.data,meanPostOTL38_9HoursBackgroundRatio);
+OTL38Mouse1CalculatedNoise9HoursRatio = OTL38Mouse1CalculatedNoise9Hours/preOTL38BaselineNoise;
+OTL38Mouse2CalculatedNoise9HoursRatio = OTL38Mouse2CalculatedNoise9Hours/preOTL38BaselineNoise_2;
+OTL38Mouse3CalculatedNoise9HoursRatio = OTL38Mouse3CalculatedNoise9Hours/preOTL38BaselineNoise_3;
+meanOTL38MiceCalculatedNoise9HourRatio = mean([OTL38Mouse1CalculatedNoise9HoursRatio(2) OTL38Mouse2CalculatedNoise9HoursRatio(2) OTL38Mouse3CalculatedNoise9HoursRatio(2)]);
+stdOTL38MiceCalculatedNoise9HourRatio = std([OTL38Mouse1CalculatedNoise9HoursRatio(2) OTL38Mouse2CalculatedNoise9HoursRatio(2) OTL38Mouse3CalculatedNoise9HoursRatio(2)]);
+
+[OTL38Mouse1CalculatedNoise12Hours, OTL38Mouse1CalculatedBackground12Hours] = getBackgroundAndNoise(preOTL38Baseline.data,meanPostOTL38_12HoursBackgroundRatio);
+[OTL38Mouse2CalculatedNoise12Hours, OTL38Mouse2CalculatedBackground12Hours] = getBackgroundAndNoise(preOTL38Baseline_2.data,meanPostOTL38_12HoursBackgroundRatio);
+[OTL38Mouse3CalculatedNoise12Hours, OTL38Mouse3CalculatedBackground12Hours] = getBackgroundAndNoise(preOTL38Baseline_3.data,meanPostOTL38_12HoursBackgroundRatio);
+OTL38Mouse1CalculatedNoise12HoursRatio = OTL38Mouse1CalculatedNoise12Hours/preOTL38BaselineNoise;
+OTL38Mouse2CalculatedNoise12HoursRatio = OTL38Mouse2CalculatedNoise12Hours/preOTL38BaselineNoise_2;
+OTL38Mouse3CalculatedNoise12HoursRatio = OTL38Mouse3CalculatedNoise12Hours/preOTL38BaselineNoise_3;
+meanOTL38MiceCalculatedNoise12HourRatio = mean([OTL38Mouse1CalculatedNoise12HoursRatio(2) OTL38Mouse2CalculatedNoise12HoursRatio(2) OTL38Mouse3CalculatedNoise12HoursRatio(2)]);
+stdOTL38MiceCalculatedNoise12HourRatio = std([OTL38Mouse1CalculatedNoise12HoursRatio(2) OTL38Mouse2CalculatedNoise12HoursRatio(2) OTL38Mouse3CalculatedNoise12HoursRatio(2)]);
+
+[OTL38Mouse1CalculatedNoise24Hours, OTL38Mouse1CalculatedBackground24Hours] = getBackgroundAndNoise(preOTL38Baseline.data,meanPostOTL38_24HoursBackgroundRatio);
+[OTL38Mouse2CalculatedNoise24Hours, OTL38Mouse2CalculatedBackground24Hours] = getBackgroundAndNoise(preOTL38Baseline_2.data,meanPostOTL38_24HoursBackgroundRatio);
+[OTL38Mouse3CalculatedNoise24Hours, OTL38Mouse3CalculatedBackground24Hours] = getBackgroundAndNoise(preOTL38Baseline_3.data,meanPostOTL38_24HoursBackgroundRatio);
+OTL38Mouse1CalculatedNoise24HoursRatio = OTL38Mouse1CalculatedNoise24Hours/preOTL38BaselineNoise;
+OTL38Mouse2CalculatedNoise24HoursRatio = OTL38Mouse2CalculatedNoise24Hours/preOTL38BaselineNoise_2;
+OTL38Mouse3CalculatedNoise24HoursRatio = OTL38Mouse3CalculatedNoise24Hours/preOTL38BaselineNoise_3;
+meanOTL38MiceCalculatedNoise24HourRatio = mean([OTL38Mouse1CalculatedNoise24HoursRatio(2) OTL38Mouse2CalculatedNoise24HoursRatio(2) OTL38Mouse3CalculatedNoise24HoursRatio(2)]);
+stdOTL38MiceCalculatedNoise24HourRatio = std([OTL38Mouse1CalculatedNoise24HoursRatio(2) OTL38Mouse2CalculatedNoise24HoursRatio(2) OTL38Mouse3CalculatedNoise24HoursRatio(2)]);
+disp('OTL38 Clearance section finished with no errors')
+
+%%%
+%Estimating cells in blood using FC and DiFC
+
+fc_cells_per_ml_estimate_prelabeledLeg1 = (45/1300)*1000
+[prelabeled_leg1_threshOf4_cells_per_ml_fwd_matches,prelabeled_leg1_threshOf4_cells_per_ml_rev_matches,prelabeled_leg1_threshOf4_cells_per_ml_total_matches] = CellsPerMLBloodDiFCEstimate(prelabeled_leg1_threshOf4.fwd_peaks(1).locs,prelabeled_leg1_threshOf4.rev_peaks(1).locs, 60, 50, 60, 2000,0.05)
+
+fc_cells_per_ml_estimate_prelabeledLeg2 = (131/1200)*1000
+
+[prelabeled_leg2_threshOf4_cells_per_ml_fwd_matches,prelabeled_leg2_threshOf4_cells_per_ml_rev_matches,prelabeled_leg2_threshOf4_cells_per_ml_total_matches] = CellsPerMLBloodDiFCEstimate(prelabeled_leg2_threshOf4.fwd_peaks(1).locs,prelabeled_leg2_threshOf4.rev_peaks(1).locs, 60, 50, 60, 2000,0.05)
+
+fc_cells_per_ml_estimate_prelabeledLeg3 = (36/1000)*1000
+[prelabeled_leg3_threshOf4_cells_per_ml_fwd_matches,prelabeled_leg3_threshOf4_cells_per_ml_rev_matches,prelabeled_leg3_threshOf4_cells_per_ml_total_matches] = CellsPerMLBloodDiFCEstimate(prelabeled_leg3_threshOf4.fwd_peaks(1).locs,prelabeled_leg3_threshOf4.rev_peaks(1).locs, 60, 50, 60, 2000,0.05)
+
+fc_cells_per_ml_estimate_inVivo_leg1 = (13/600)*1000
+[inVivo_leg1_threshOf4_cells_per_ml_fwd_matches,inVivo_leg1_threshOf4_cells_per_ml_rev_matches,inVivo_leg1_threshOf4_cells_per_ml_total_matches] = CellsPerMLBloodDiFCEstimate(inVivo_leg1_threshOf4.fwd_peaks(1).locs,inVivo_leg1_threshOf4.rev_peaks(1).locs, 60, 50, 60, 2000,0.05)
+
+fc_cells_per_ml_estimate_inVivo_leg2 = (189/1000)*1000
+[inVivo_leg2_threshOf4_cells_per_ml_fwd_matches,inVivo_leg2_threshOf4_cells_per_ml_rev_matches,inVivo_leg2_threshOf4_cells_per_ml_total_matches] = CellsPerMLBloodDiFCEstimate(inVivo_leg2_threshOf4.fwd_peaks(1).locs,inVivo_leg2_threshOf4.rev_peaks(1).locs, 60, 50, 60, 2000,0.05)
+
+
+fc_cells_per_ml_estimate_inVivo_leg3 = (11/500)*1000
+[inVivo_leg3_threshOf4_cells_per_ml_fwd_matches,inVivo_leg3_threshOf4_cells_per_ml_rev_matches,inVivo_leg3_threshOf4_cells_per_ml_total_matches] = CellsPerMLBloodDiFCEstimate(inVivo_leg3_threshOf4.fwd_peaks(1).locs,inVivo_leg3_threshOf4.rev_peaks(1).locs, 60, 50, 60, 2000,0.05)
+
+
+
+
+%%%
+%Figure making and plotting data
+% 
+% prelabeledTogether = [prelabeledLeg1_fwdPeakAmp'  prelabeledLeg1_revPeakAmp' prelabeledLeg2_fwdPeakAmp' prelabeledLeg2_revPeakAmp' prelabeledLeg3_fwdPeakAmp' prelabeledLeg3_revPeakAmp'];
+% 
+% inVivoTogether = [inVivo_leg1_revPeakAmp' inVivo_leg2_fwdPeakAmp' inVivo_leg3_fwdPeakAmp' inVivo_leg3_revPeakAmp'];
+% 
+% inVivoLabeledandPrelabeledLegBestAmps = [prelabeledTogether'; inVivoTogether'];
+% 
+% firstScanPrelabeled = categorical(repmat(1,60,1), 1, {'Prelabeled Scan 1'});
+% secondScanPrelabeled = categorical(repmat(2,106,1), 2, {'Prelabeled Scan 2'});
+% thirdScanPrelabeled = categorical(repmat(3,118,1), 3, {'Prelabeled Scan 3'});
+% 
+% prelabeledGroup = categorical(repmat(1,284,1), 1, {'Pre-Labeled'});
+% inVivoLabeledGroup = categorical(repmat(2,47,1), 2, {'in vivo Labeled'});
+% 
+% 
+% firstScanInVivo = categorical(repmat(4,11,1), 4, {'in vivo Scan 1'});
+% secondScanInVivo = categorical(repmat(5,12,1), 5, {'in vivo Scan 2'});
+% thirdScanInVivo = categorical(repmat(6,24,1), 6, {'in vivo scan 3'});   
+% 
+% % InVivoandPrelabeledScanGroups = [firstScanPrelabeled; secondScanPrelabeled; thirdScanPrelabeled; firstScanInVivo; secondScanInVivo; thirdScanInVivo];
+% 
+% InVivoandPrelabeledScanGroups = [prelabeledGroup; inVivoLabeledGroup];
+% 
+% % InVivoandPrelabeledScanGroups = cellstr(InVivoandPrelabeledScanGroups);
+% 
+% prelabeledTogether = [prelabeledLeg1_fwdPeakAmp'  prelabeledLeg1_revPeakAmp' prelabeledLeg2_fwdPeakAmp' prelabeledLeg2_revPeakAmp' prelabeledLeg3_fwdPeakAmp' prelabeledLeg3_revPeakAmp'];
+% inVivoTogether = [inVivo_leg1_revPeakAmp' inVivo_leg2_fwdPeakAmp' inVivo_leg3_fwdPeakAmp' inVivo_leg3_revPeakAmp'];
+% inVivoLabeledandPrelabeledLegBestAmps_threshOf5 = [prelabeledTogether'; inVivoTogether'];
+% prelabeledGroup_threshOf5 = categorical(repmat(1,644,1), 1, {'Pre-Labeled'});
+% inVivoLabeledGroup_threshOf5 = categorical(repmat(2,50,1), 2, {'in vivo Labeled'});
+% InVivoandPrelabeledScanGroups_threshOf5 = [prelabeledGroup_threshOf5; inVivoLabeledGroup_threshOf5];
+
+prelabeledTogether_threshOf4 = [prelabeledLeg1_fwdPeakAmp_threshOf4'  prelabeledLeg1_revPeakAmp_threshOf4' prelabeledLeg2_fwdPeakAmp_threshOf4' prelabeledLeg2_revPeakAmp_threshOf4' prelabeledLeg3_fwdPeakAmp_threshOf4' prelabeledLeg3_revPeakAmp_threshOf4'];
+inVivoTogether_threshOf4 = [inVivo_leg1_fwdPeakAmp_threshOf4' inVivo_leg1_revPeakAmp_threshOf4' inVivo_leg2_fwdPeakAmp_threshOf4' inVivo_leg3_fwdPeakAmp_threshOf4' inVivo_leg3_revPeakAmp_threshOf4'];
+inVivoLabeledandPrelabeledLegBestAmps_threshOf4 = [prelabeledTogether_threshOf4'; inVivoTogether_threshOf4'];
+prelabeledGroup_threshOf4 = categorical(repmat(1,904,1), 1, {'Pre-Labeled'});
+inVivoLabeledGroup_threshOf4= categorical(repmat(2,108,1), 2, {'in vivo Labeled'}); 
+InVivoandPrelabeledScanGroups_threshOf4 = [prelabeledGroup_threshOf4; inVivoLabeledGroup_threshOf4];
+
+
+% InVivoandPrelabeledScanGroups = cellstr(InVivoandPrelabeledScanGroups);
+
+backgroundNoiseRatioOTL38MiceCalculatedMean =  [meanOTL38MiceCalculatedNoise3HourRatio meanOTL38MiceCalculatedNoise6HourRatio meanOTL38MiceCalculatedNoise9HourRatio meanOTL38MiceCalculatedNoise12HourRatio meanOTL38MiceCalculatedNoise24HourRatio];
+backgroundNoiseRatioOTL38MiceCalculatedSTD = [stdOTL38MiceCalculatedNoise3HourRatio stdOTL38MiceCalculatedNoise6HourRatio stdOTL38MiceCalculatedNoise9HourRatio stdOTL38MiceCalculatedNoise12HourRatio stdOTL38MiceCalculatedNoise24HourRatio];
+timePoints = [3, 6, 9, 12, 24];
+
+
+disp('Figure making and plotting data section finished with no errors')
+
+%%
+%PBMCs and Cancer cell flow percentages
+%PBMC + OTL38 only false postive percentage
+pbmc_OTL38_6_15 = mean([0.053 0.049]);
+pbmc_OTL38_6_22 = mean([0.035 0.029]);
+pbmc_OTL38_6_25 = mean([0.021 0.025]);
+pbmc_OTL38_mean = mean([pbmc_OTL38_6_15 pbmc_OTL38_6_22 pbmc_OTL38_6_25]);
+pbmc_OTL38_std = std([pbmc_OTL38_6_15 pbmc_OTL38_6_22 pbmc_OTL38_6_25]);
+
+%PBMC + MM + OTL38
+pbmc_mm_OTL38_6_15 = mean([1.66 2.95]);
+pbmc_mm_OTL38_6_22 = mean([1.26 1.36]);
+pbmc_mm_OTL38_6_25 = mean([1.78 1.92]);
+pbmc_mm_OTL38_mean = mean([pbmc_mm_OTL38_6_15 pbmc_mm_OTL38_6_22 pbmc_mm_OTL38_6_25]);
+pbmc_mm_OTL38_std = std([pbmc_mm_OTL38_6_15 pbmc_mm_OTL38_6_22 pbmc_mm_OTL38_6_25]);
+
+%PBMC + FA + IGROV-1  + OTL38
+pbmc_fa_OTL38_6_15 = mean([4.67 8.18]);
+pbmc_fa_OTL38_6_22 = mean([3.34 5.16]);
+pbmc_fa_OTL38_6_25 = mean([1.58 1.89]);
+pbmc_fa_OTL38_mean = mean([pbmc_fa_OTL38_6_15 pbmc_fa_OTL38_6_22 pbmc_fa_OTL38_6_25]);
+pbmc_fa_OTL38_std = std([pbmc_fa_OTL38_6_15 pbmc_fa_OTL38_6_22 pbmc_fa_OTL38_6_25]);
+
+%PBMC + IGROV-1 + OTL38
+pbmc_igrov1_OTL38_6_15 = mean([68.06 71.49]);
+pbmc_igrov1_OTL38_6_22 = mean([61.24 61.55]);
+pbmc_igrov1_OTL38_6_25 = mean([53.99 55.21]);
+pbmc_igrov1_OTL38_mean = mean([pbmc_igrov1_OTL38_6_15 pbmc_igrov1_OTL38_6_22 pbmc_igrov1_OTL38_6_25]);
+pbmc_igrov1_OTL38_std = std([pbmc_igrov1_OTL38_6_15 pbmc_igrov1_OTL38_6_22 pbmc_igrov1_OTL38_6_25]);
+
+%PBMC + L1210A + OTL38
+pbmc_l1210A_OTL38_6_15 = mean([96.21 94.3]);
+pbmc_l1210A_OTL38_6_22 = mean([63.38 72.53]);
+pbmc_l1210A_OTL38_6_25 = mean([81.09 91.65]);
+pbmc_l1210A_OTL38_mean = mean([pbmc_l1210A_OTL38_6_15 pbmc_l1210A_OTL38_6_22 pbmc_l1210A_OTL38_6_25]);
+pbmc_l1210A_OTL38_std = std([pbmc_l1210A_OTL38_6_15 pbmc_l1210A_OTL38_6_22 pbmc_l1210A_OTL38_6_25]);
+
+%%
+%Turning flow cytometry histograms for NIR fluoresecnce into bar graphs, using mean and STD from one sample (using the values flowjo gives) 20230811
+
+mean_pbmc_only = 40.9;
+std_pbmc_only = 254;
+
+mean_pbmc_otl38 = 102;
+std_pbmc_otl38 = 622;
+
+mean_pbmc_mm_otl38 = 103;
+std_pbmc_mm_otl38 = 221;
+
+mean_pbmc_fa_igrov1_otl38 = 90.9;
+std_pbmc_fa_igrov1_otl38 = 936;
+
+mean_pbmc_igrov1 = 265;
+std_pbmc_igrov1 = 194;
+
+mean_pbmc_igrov1_otl38 = 6807;
+std_pbmc_igrov1_otl38 = 7119;
+
+mean_igrov1_pbs_otl38 = 7828;
+std_igrov1_pbs_otl38 = 8028;
+
+
+mean_pbmc_l1210a = 134;
+std_pbmc_l1210a = 95.4;
+
+mean_pbmc_l1210a_otl38 = 19672;
+std_pbmc_l1210a_otl38 = 10010;
+
+mean_l1210a_pbs_otl38 = 21015;
+std_l1210a_pbs_otl38 = 6742;
+
+mean_all_labeled = mean([mean_pbmc_igrov1_otl38 mean_pbmc_l1210a_otl38]);
+
+mean_all_control = mean([mean_pbmc_only mean_pbmc_otl38 mean_pbmc_mm_otl38 mean_pbmc_fa_igrov1_otl38 mean_pbmc_igrov1 mean_pbmc_l1210a]);
+
+width = 0.4;
+figure(1);
+tiledlayout(1,2)
+nexttile(1);
+bar(1,mean_pbmc_only,width);
+hold on
+error_pbmc_only = errorbar(1,mean_pbmc_only,[],std_pbmc_only,'LineWidth',1,'CapSize',15);
+error_pbmc_only.Color = [0 0 0];
+
+bar(2,mean_pbmc_otl38,width);
+error_pbmc_otl38 = errorbar(2,mean_pbmc_otl38,[],std_pbmc_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_otl38.Color = [0 0 0];
+
+bar(3,mean_pbmc_mm_otl38,width);
+error_pbmc_mm_otl38 = errorbar(3,mean_pbmc_mm_otl38,[],std_pbmc_mm_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_mm_otl38.Color = [0 0 0];
+
+bar(4,mean_pbmc_fa_igrov1_otl38,width);
+error_pbmc_fa_igrov1_otl38 = errorbar(4,mean_pbmc_fa_igrov1_otl38,[],std_pbmc_fa_igrov1_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_fa_igrov1_otl38.Color = [0 0 0];
+
+bar(5,mean_pbmc_l1210a,width);
+error_pbmc_l1210a = errorbar(5,mean_pbmc_l1210a,[],std_pbmc_l1210a,'LineWidth',1,'CapSize',15);
+error_pbmc_l1210a.Color = [0 0 0];
+
+bar(6,mean_pbmc_igrov1,width);
+error_pbmc_igrov1 = errorbar(6,mean_pbmc_igrov1,[],std_pbmc_igrov1,'LineWidth',1,'CapSize',15);
+error_pbmc_igrov1.Color = [0 0 0];
+
+bar(7,mean_pbmc_igrov1_otl38,width);
+error_pbmc_igrov1_otl38 = errorbar(7,mean_pbmc_igrov1_otl38,[],std_pbmc_igrov1_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_igrov1_otl38.Color = [0 0 0];
+
+bar(8,mean_igrov1_pbs_otl38,width);
+error_igrov1_pbs_otl38 = errorbar(8,mean_igrov1_pbs_otl38,[],std_igrov1_pbs_otl38,'LineWidth',1,'CapSize',15);
+error_igrov1_pbs_otl38.Color = [0 0 0];
+
+bar(9,mean_pbmc_l1210a_otl38,width);
+error_pbmc_l1210a_otl38 = errorbar(9,mean_pbmc_l1210a_otl38,[],std_pbmc_l1210a_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_l1210a_otl38.Color = [0 0 0];
+
+bar(10,mean_l1210a_pbs_otl38,width);
+error_l1210a_pbs_otl38 = errorbar(10,mean_l1210a_pbs_otl38,[],std_l1210a_pbs_otl38,'LineWidth',1,'CapSize',15);
+error_l1210a_pbs_otl38.Color = [0 0 0];
+
+hold off
+xticks(1:10)
+xticklabels({'PBMC Only', 'PBMC + OTL38', 'PBMC + MM + OTL38','PBMC + FA + IGROV-1 + OTL38','PBMC + L1210A','PBMC + IGROV-1','PBMC + IGROV-1 + OTL38','IGROV-1 + OTL38 in PBS','PBMC + L1210A + OTL38','L1210A + OTL38 in PBS'});
+xtickangle(45)
+% ylim([0 40000]);
+ylabel('NIR Fluoresence (OTL38)','FontSize',40,'FontWeight','bold','FontName','Arial');
+axis = gca;
+axis.FontSize = 40;
+axis.FontWeight = 'bold';
+axis.FontName = 'Arial';
+axis.LineWidth = 2;
+nexttile(2);
+bar(1,mean_pbmc_only,width);
+hold on
+error_pbmc_only = errorbar(1,mean_pbmc_only,[],std_pbmc_only,'LineWidth',1,'CapSize',15);
+error_pbmc_only.Color = [0 0 0];
+
+bar(2,mean_pbmc_otl38,width);
+error_pbmc_otl38 = errorbar(2,mean_pbmc_otl38,[],std_pbmc_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_otl38.Color = [0 0 0];
+
+bar(3,mean_pbmc_mm_otl38,width);
+error_pbmc_mm_otl38 = errorbar(3,mean_pbmc_mm_otl38,[],std_pbmc_mm_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_mm_otl38.Color = [0 0 0];
+
+bar(4,mean_pbmc_fa_igrov1_otl38,width);
+error_pbmc_fa_igrov1_otl38 = errorbar(4,mean_pbmc_fa_igrov1_otl38,[],std_pbmc_fa_igrov1_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_fa_igrov1_otl38.Color = [0 0 0];
+
+bar(5,mean_pbmc_l1210a,width);
+error_pbmc_l1210a = errorbar(5,mean_pbmc_l1210a,[],std_pbmc_l1210a,'LineWidth',1,'CapSize',15);
+error_pbmc_l1210a.Color = [0 0 0];
+
+bar(6,mean_pbmc_igrov1,width);
+error_pbmc_igrov1 = errorbar(6,mean_pbmc_igrov1,[],std_pbmc_igrov1,'LineWidth',1,'CapSize',15);
+error_pbmc_igrov1.Color = [0 0 0];
+
+bar(7,mean_pbmc_igrov1_otl38,width);
+error_pbmc_igrov1_otl38 = errorbar(7,mean_pbmc_igrov1_otl38,[],std_pbmc_igrov1_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_igrov1_otl38.Color = [0 0 0];
+
+bar(8,mean_igrov1_pbs_otl38,width);
+error_igrov1_pbs_otl38 = errorbar(8,mean_igrov1_pbs_otl38,[],std_igrov1_pbs_otl38,'LineWidth',1,'CapSize',15);
+error_igrov1_pbs_otl38.Color = [0 0 0];
+
+bar(9,mean_pbmc_l1210a_otl38,width);
+error_pbmc_l1210a_otl38 = errorbar(9,mean_pbmc_l1210a_otl38,[],std_pbmc_l1210a_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_l1210a_otl38.Color = [0 0 0];
+
+bar(10,mean_l1210a_pbs_otl38,width);
+error_l1210a_pbs_otl38 = errorbar(10,mean_l1210a_pbs_otl38,[],std_l1210a_pbs_otl38,'LineWidth',1,'CapSize',15);
+error_l1210a_pbs_otl38.Color = [0 0 0];
+
+
+hold off
+xticks(1:10)
+xticklabels({'PBMC Only', 'PBMC + OTL38', 'PBMC + MM + OTL38','PBMC + FA + IGROV-1 + OTL38','PBMC + L1210A','PBMC + IGROV-1','PBMC + IGROV-1 + OTL38','IGROV-1 + OTL38 in PBS','PBMC + L1210A + OTL38','L1210A + OTL38 in PBS'});
+xtickangle(45)
+% ylim([0 40000]);
+ylabel('NIR Fluoresence (OTL38)','FontSize',40,'FontWeight','bold','FontName','Arial');
+axis = gca;
+axis.FontSize = 40;
+axis.FontWeight = 'bold';
+axis.FontName = 'Arial';
+axis.LineWidth = 2;
+set(gca,'YScale','log');
+
+
+width = 0.4;
+figure(2);
+tiledlayout(1,1)
+nexttile(1);
+bar(1,mean_pbmc_only,width);
+hold on
+error_pbmc_only = errorbar(1,mean_pbmc_only,[],std_pbmc_only,'LineWidth',1,'CapSize',15);
+error_pbmc_only.Color = [0 0 0];
+
+bar(2,mean_pbmc_otl38,width);
+error_pbmc_otl38 = errorbar(2,mean_pbmc_otl38,[],std_pbmc_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_otl38.Color = [0 0 0];
+
+bar(3,mean_pbmc_mm_otl38,width);
+error_pbmc_mm_otl38 = errorbar(3,mean_pbmc_mm_otl38,[],std_pbmc_mm_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_mm_otl38.Color = [0 0 0];
+
+bar(4,mean_pbmc_fa_igrov1_otl38,width);
+error_pbmc_fa_igrov1_otl38 = errorbar(4,mean_pbmc_fa_igrov1_otl38,[],std_pbmc_fa_igrov1_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_fa_igrov1_otl38.Color = [0 0 0];
+
+bar(5,mean_pbmc_l1210a,width);
+error_pbmc_l1210a = errorbar(5,mean_pbmc_l1210a,[],std_pbmc_l1210a,'LineWidth',1,'CapSize',15);
+error_pbmc_l1210a.Color = [0 0 0];
+
+bar(6,mean_pbmc_igrov1,width);
+error_pbmc_igrov1 = errorbar(6,mean_pbmc_igrov1,[],std_pbmc_igrov1,'LineWidth',1,'CapSize',15);
+error_pbmc_igrov1.Color = [0 0 0];
+
+bar(7,mean_pbmc_igrov1_otl38,width);
+error_pbmc_igrov1_otl38 = errorbar(7,mean_pbmc_igrov1_otl38,[],std_pbmc_igrov1_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_igrov1_otl38.Color = [0 0 0];
+
+bar(8,mean_igrov1_pbs_otl38,width);
+error_igrov1_pbs_otl38 = errorbar(8,mean_igrov1_pbs_otl38,[],std_igrov1_pbs_otl38,'LineWidth',1,'CapSize',15);
+error_igrov1_pbs_otl38.Color = [0 0 0];
+
+bar(9,mean_pbmc_l1210a_otl38,width);
+error_pbmc_l1210a_otl38 = errorbar(9,mean_pbmc_l1210a_otl38,[],std_pbmc_l1210a_otl38,'LineWidth',1,'CapSize',15);
+error_pbmc_l1210a_otl38.Color = [0 0 0];
+
+bar(10,mean_l1210a_pbs_otl38,width);
+error_l1210a_pbs_otl38 = errorbar(10,mean_l1210a_pbs_otl38,[],std_l1210a_pbs_otl38,'LineWidth',1,'CapSize',15);
+error_l1210a_pbs_otl38.Color = [0 0 0];
+
+
+hold off
+xticks(1:10)
+xticklabels({'PBMC Only', 'PBMC + OTL38', 'PBMC + MM + OTL38','PBMC + FA + IGROV-1 + OTL38','PBMC + L1210A','PBMC + IGROV-1','PBMC + IGROV-1 + OTL38','IGROV-1 + OTL38 in PBS','PBMC + L1210A + OTL38','L1210A + OTL38 in PBS'});
+xtickangle(45)
+% ylim([0 40000]);
+ylabel('NIR Fluoresence (OTL38)','FontSize',40,'FontWeight','bold','FontName','Arial');
+axis = gca;
+axis.FontSize = 40;
+axis.FontWeight = 'bold';
+axis.FontName = 'Arial';
+axis.LineWidth = 1;
+set(gca,'YScale','log');
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Figure Panels!!!!!!!!!!!!!!!!!!!!!!!!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%
+%Figure 2- Intro to DiFC (compressed)
+%Instrument schematic, Leg probe picture, Probes on tissue with cells example, Atrerial, Venous ,unmatched examples
+lineWidth= 1;
+FontSize = 60;
+MarkerSize = 30;
+figure(3);
+tiledlayout(2,3)
+%arterail match
+x1 = 715;
+x2 = 717;
+nexttile(1)
+plot(prelabeled_leg2_threshOf4.time, prelabeled_leg2_threshOf4.data_bs(:,1),'Color', '#0072B2','LineWidth',1.5);
+hold on
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.fwd_peaks(1).locs), prelabeled_leg2_threshOf4.fwd_peaks(1).pks, '>', 'Color', '#0072B2','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.rev_peaks(1).locs), prelabeled_leg2_threshOf4.rev_peaks(1).pks, '<', 'Color', '#0072B2','MarkerFaceColor','b','MarkerEdgeColor','b','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.unmatched_peaks(1).locs), prelabeled_leg2_threshOf4.unmatched_peaks(1).pks, 'o', 'Color', '#0072B2','MarkerFaceColor','#009E73','MarkerEdgeColor','#009E73','MarkerSize',MarkerSize)
+legend( '','Arterial Matched-P1', '', '','Location','northwest', 'Orientation','horizontal')
+%ylim([-50,600])
+ylim([-100,400])
+yticks([-100  0 100 200 300 400])
+yticklabels({'','0','','200','','400'})
+% xticklabels({'0','','0.5', '','1'});
+xticklabels({'','','', '',''});
+xlim([x1,x2]) 
+xticks([x1,x1+.25,x1+.5,x1+.75,x1+1,x1+1.25,x1+1.5,x1+1.75,x1+2]);
+% xticklabels({'0','','0.5', '','1'});
+% xlim([x1,x2]) 
+% xticks([x1,x1+.5,x1+1, x2-0.5,x2]);
+% xticklabels({'0','','1', '','2'});
+axis = gca;
+axis.FontSize = FontSize;
+% axis.FontWeight = 'bold';
+axis.FontName = 'Arial';
+axis.LineWidth = lineWidth;
+% xlabel('Time (sec)', 'FontSize', FontSize,'FontWeight','bold','FontName','Arial');
+% ylabel( 'NIR-DiFC Signal (nA)', 'FontSize',FontSize,'FontWeight','bold','FontName','Arial');
+hold off
+nexttile(4)
+plot(prelabeled_leg2_threshOf4.time, prelabeled_leg2_threshOf4.data_bs(:,2),'Color', '#0072B2','LineWidth',1.5);
+hold on
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.fwd_peaks(2).locs), prelabeled_leg2_threshOf4.fwd_peaks(2).pks, '>', 'Color', '#0072B2','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.rev_peaks(2).locs), prelabeled_leg2_threshOf4.rev_peaks(2).pks, '<', 'Color', '#0072B2','MarkerFaceColor','b','MarkerEdgeColor','b','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.unmatched_peaks(2).locs), prelabeled_leg2_threshOf4.unmatched_peaks(2).pks, 'o', 'Color', '#0072B2','MarkerFaceColor','#009E73','MarkerEdgeColor','#009E73','MarkerSize',MarkerSize)
+legend( '','Arterial Matched-P2', '', '','Location','northwest', 'Orientation','horizontal')
+%ylim([-50,600])
+ylim([-100,400])
+yticks([-100  0 100 200 300 400])
+yticklabels({'','0','','200','','400'})
+xlim([x1,x2]) 
+xticks([x1,x1+.25,x1+.5,x1+.75,x1+1,x1+1.25,x1+1.5,x1+1.75,x1+2]);
+xticklabels({'0','','0.5', '','1','','1.5','','2'});
+axis = gca;
+axis.FontSize = FontSize;
+% axis.FontWeight = 'bold';
+axis.FontName = 'Arial';
+axis.LineWidth = lineWidth;
+% xlabel('Time (sec)', 'FontSize', FontSize,'FontWeight','bold','FontName','Arial');
+% ylabel( 'NIR-DiFC Signal (nA)', 'FontSize',FontSize,'FontWeight','bold','FontName','Arial');
+hold off
+%Venous match
+x1 = 69.2;
+x2 = 67.2;
+nexttile(2)
+plot(prelabeled_leg2_threshOf4.time, prelabeled_leg2_threshOf4.data_bs(:,1),'Color', '#0072B2','LineWidth',1.5);
+hold on
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.fwd_peaks(1).locs), prelabeled_leg2_threshOf4.fwd_peaks(1).pks, '>', 'Color', '#0072B2','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.rev_peaks(1).locs), prelabeled_leg2_threshOf4.rev_peaks(1).pks, '<', 'Color', '#0072B2','MarkerFaceColor','b','MarkerEdgeColor','b','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.unmatched_peaks(1).locs), prelabeled_leg2_threshOf4.unmatched_peaks(1).pks, 'o', 'Color', '#0072B2','MarkerFaceColor','#009E73','MarkerEdgeColor','#009E73','MarkerSize',MarkerSize)
+legend( '','', 'Venous Matched-P1', '','Location','northwest', 'Orientation','horizontal')
+%ylim([-50,600])
+ylim([-100,400])
+yticks([-100  0 100 200 300 400])
+% yticklabels({'','0','','200','','400'})
+yticklabels({'','','','','',''})
+xlim([x2,x1]) 
+xticks([x2,x2+.25,x2+.5,x2+.75,x2+1,x2+1.25,x2+1.5,x2+1.75,x2+2]);
+% xticklabels({'0','','0.5', '','1'});
+xticklabels({'','','', '',''});
+% xlim([x1,x2]) 
+% xticks([x1,x1+.5,x1+1, x2-0.5,x2]);
+% xticklabels({'0','','1', '','2'});
+axis = gca;
+axis.FontSize = FontSize;
+% axis.FontWeight = 'bold';
+axis.FontName = 'Arial';
+axis.LineWidth = lineWidth;
+% xlabel('Time (sec)', 'FontSize', FontSize,'FontWeight','bold','FontName','Arial');
+% ylabel( 'NIR-DiFC Signal (nA)', 'FontSize',FontSize,'FontWeight','bold','FontName','Arial');
+hold off
+nexttile(5)
+x1 = 68;
+x2 = 66;
+plot(prelabeled_leg2_threshOf4.time, prelabeled_leg2_threshOf4.data_bs(:,2),'Color', '#0072B2','LineWidth',1.5);
+hold on
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.fwd_peaks(2).locs), prelabeled_leg2_threshOf4.fwd_peaks(2).pks, '>', 'Color', '#0072B2','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.rev_peaks(2).locs), prelabeled_leg2_threshOf4.rev_peaks(2).pks, '<', 'Color', '#0072B2','MarkerFaceColor','b','MarkerEdgeColor','b','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.unmatched_peaks(2).locs), prelabeled_leg2_threshOf4.unmatched_peaks(2).pks, 'o', 'Color', '#0072B2','MarkerFaceColor','#009E73','MarkerEdgeColor','#009E73','MarkerSize',MarkerSize)
+legend( '','', 'Venous Matched-P2', '','Location','northwest', 'Orientation','horizontal')
+%ylim([-50,600])
+ylim([-100,400])
+yticks([-100  0 100 200 300 400])
+% yticklabels({'','0','','200','','400'})
+yticklabels({'','','','','',''})
+xlim([x2,x1]) 
+xticks([x2,x2+.25,x2+.5,x2+.75,x2+1,x2+1.25,x2+1.5,x2+1.75,x2+2]);
+xticklabels({'0','','0.5', '','1','','1.5','','2'});
+axis = gca;
+axis.FontSize = FontSize;
+% axis.FontWeight = 'bold';
+axis.FontName = 'Arial';
+axis.LineWidth = lineWidth;
+% xlabel('Time (sec)', 'FontSize', FontSize,'FontWeight','bold','FontName','Arial');
+% ylabel( 'NIR-DiFC Signal (nA)', 'FontSize',FontSize,'FontWeight','bold','FontName','Arial');
+hold off
+%Unmatch
+x1 = 2299.77-1;
+x2 = 2299.77+1;
+nexttile(3)
+plot(prelabeled_leg2_threshOf4.time, prelabeled_leg2_threshOf4.data_bs(:,1),'Color', '#0072B2','LineWidth',1.5);
+hold on
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.fwd_peaks(1).locs), prelabeled_leg2_threshOf4.fwd_peaks(1).pks, '>', 'Color', '#0072B2','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.rev_peaks(1).locs), prelabeled_leg2_threshOf4.rev_peaks(1).pks, '<', 'Color', '#0072B2','MarkerFaceColor','b','MarkerEdgeColor','b','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.unmatched_peaks(1).locs), prelabeled_leg2_threshOf4.unmatched_peaks(1).pks, 'o', 'Color', '#0072B2','MarkerFaceColor','#009E73','MarkerEdgeColor','#009E73','MarkerSize',MarkerSize)
+legend( '','', '', 'Unmatched-P1','Location','northwest', 'Orientation','horizontal')
+%ylim([-50,600])
+ylim([-100,400])
+yticks([-100  0 100 200 300 400])
+% yticklabels({'','0','','200','','400'})
+yticklabels({'','','','','',''})
+xlim([x1,x2]) 
+xticks([x1,x1+.25,x1+.5,x1+.75,x1+1,x1+1.25,x1+1.5,x1+1.75,x1+2]);
+% xticklabels({'0','','0.5', '','1'});
+xticklabels({'','','', '',''});
+% xlim([x1,x2]) 
+% xticks([x1,x1+.5,x1+1, x2-0.5,x2]);
+% xticklabels({'0','','1', '','2'});
+axis = gca;
+axis.FontSize = FontSize;
+% axis.FontWeight = 'bold';
+axis.FontName = 'Arial';
+axis.LineWidth = lineWidth;
+% xlabel('Time (sec)', 'FontSize', FontSize,'FontWeight','bold','FontName','Arial');
+% ylabel( 'NIR-DiFC Signal (nA)', 'FontSize',FontSize,'FontWeight','bold','FontName','Arial');
+hold off
+nexttile(6)
+plot(prelabeled_leg2_threshOf4.time, prelabeled_leg2_threshOf4.data_bs(:,2),'Color', '#0072B2','LineWidth',1.5);
+hold on
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.fwd_peaks(2).locs), prelabeled_leg2_threshOf4.fwd_peaks(2).pks, '>', 'Color', '#0072B2','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.rev_peaks(2).locs), prelabeled_leg2_threshOf4.rev_peaks(2).pks, '<', 'Color', '#0072B2','MarkerFaceColor','b','MarkerEdgeColor','b','MarkerSize',MarkerSize)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.unmatched_peaks(2).locs), prelabeled_leg2_threshOf4.unmatched_peaks(2).pks, 'o', 'Color', '#0072B2','MarkerFaceColor','#009E73','MarkerEdgeColor','#009E73','MarkerSize',MarkerSize)
+legend( '','', '', 'Unmatched-P2','Location','northwest', 'Orientation','horizontal')
+%ylim([-50,600])
+ylim([-100,400])
+yticks([-100  0 100 200 300 400])
+% yticklabels({'','0','','200','','400'})
+yticklabels({'','','','','',''})
+xlim([x1,x2]) 
+xticks([x1,x1+.25,x1+.5,x1+.75,x1+1,x1+1.25,x1+1.5,x1+1.75,x1+2]);
+xticklabels({'0','','0.5', '','1','','1.5','','2'});
+axis = gca;
+axis.FontSize = FontSize;
+% axis.FontWeight = 'bold';
+axis.FontName = 'Arial';
+axis.LineWidth = lineWidth;
+% xlabel('Time (sec)', 'FontSize', FontSize,'FontWeight','bold','FontName','Arial');
+% ylabel( 'NIR-DiFC Signal (nA)', 'FontSize',FontSize,'FontWeight','bold','FontName','Arial');
+hold off
+fig = gcf;
+tl= fig.Children;
+ylabel(tl, 'NIR-DiFC Signal (nA)', 'FontSize',FontSize,'FontWeight','bold','FontName','Arial');
+xlabel(tl, 'Time (sec)', 'FontSize',FontSize,'FontWeight','bold','FontName','Arial');
+%%
+%THRESH OF 4*STD
+%Figure 3 and 4 DiFC data examples with blood draws (Prelabeled, no labeled, in vivo labeled, OTL38 only
+%Leg control (no injection), Leg prelabeled (first ever scan), leg in vivo labeled (different axes postions for figure making) (prelabeled scan 2)
+
+lineWidth = 1;
+width = 0.4;
+figure(4);
+tiledlayout(4,2);
+nexttile(1, [1 2])
+plot(prelabeled_leg2_threshOf4.time, prelabeled_leg2_threshOf4.data_bs(:,2),'Color', '#0072B2','LineWidth',1.5);
+hold on
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.fwd_peaks(2).locs), prelabeled_leg2_threshOf4.fwd_peaks(2).pks, '>', 'Color', '#0072B2','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',12)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.rev_peaks(2).locs), prelabeled_leg2_threshOf4.rev_peaks(2).pks, '<', 'Color', '#0072B2','MarkerFaceColor','b','MarkerEdgeColor','b','MarkerSize',12)
+plot(prelabeled_leg2_threshOf4.time(prelabeled_leg2_threshOf4.unmatched_peaks(2).locs), prelabeled_leg2_threshOf4.unmatched_peaks(2).pks, 'o', 'Color', '#0072B2','MarkerFaceColor','#009E73','MarkerEdgeColor','#009E73','MarkerSize',12)
+plot(prelabeled_leg2_threshOf4.time, prelabeled_leg2_threshOf4.thresh_curve(:,2), '-k','LineWidth',2)
+legend( '','Matched Arterial', 'Matched Venous', 'Unmatched','Detection Threshold','Location','northoutside', 'Orientation','horizontal')
+ylim([-100,400])
+yticks([-100  0 100 200 300 400])
+yticklabels({'','0','','200','',400'})
+xlim([0,900]) 
+xticks([0, 300, 600, 900]);
+xticklabels({'','','', ''});
+axis = gca;
+axis.FontSize = 30;
+axis.FontName = 'Arial';
+axis.LineWidth = lineWidth;
+hold off
+nexttile(3, [1, 2])
+plot(legControl2_threshOf4.time, legControl2_threshOf4.data_bs(:,2),'Color', '#0072B2','LineWidth',1.5);
+hold on
+plot(legControl2_threshOf4.time(legControl2_threshOf4.fwd_peaks(2).locs), legControl2_threshOf4.fwd_peaks(2).pks, '>', 'Color', '#0072B2','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',12)
+plot(legControl2_threshOf4.time(legControl2_threshOf4.rev_peaks(2).locs), legControl2_threshOf4.rev_peaks(2).pks, '<', 'Color', '#0072B2','MarkerFaceColor','b','MarkerEdgeColor','b','MarkerSize',12)
+plot(legControl2_threshOf4.time(legControl2_threshOf4.unmatched_peaks(2).locs), legControl2_threshOf4.unmatched_peaks(2).pks, 'o', 'Color', '#0072B2','MarkerFaceColor','#009E73','MarkerEdgeColor','#009E73','MarkerSize',12)
+plot(legControl2_threshOf4.time, legControl2_threshOf4.thresh_curve(:,2), '-k','LineWidth',2)
+ylim([-100,400])
+yticks([-100  0 100 200 300 400])
+yticklabels({'','0','','200','',400'})
+xlim([2700,3600]) 
+xticklabels({'','','', ''});
+xlabel('Time (min)', 'FontSize', 40,'FontWeight','bold','FontName','Arial');
+ylabel( 'NIR-DiFC Signal (nA)', 'FontSize',40,'FontWeight','bold','FontName','Arial');
+axis = gca;
+axis.FontSize = 30;
+axis.FontName = 'Arial';
+axis.LineWidth = lineWidth;
+hold off
+nexttile(5, [1 2])
+plot(inVivo_leg3_threshOf4.time, inVivo_leg3_threshOf4.data_bs(:,1),'Color', '#0072B2','LineWidth',1.5);
+hold on
+plot(inVivo_leg3_threshOf4.time(inVivo_leg3_threshOf4.fwd_peaks(1).locs), inVivo_leg3_threshOf4.fwd_peaks(1).pks, '>', 'Color', '#0072B2','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',12)
+plot(inVivo_leg3_threshOf4.time(inVivo_leg3_threshOf4.rev_peaks(1).locs), inVivo_leg3_threshOf4.rev_peaks(1).pks, '<', 'Color', '#0072B2','MarkerFaceColor','b','MarkerEdgeColor','b','MarkerSize',12)
+plot(inVivo_leg3_threshOf4.time(inVivo_leg3_threshOf4.unmatched_peaks(1).locs), inVivo_leg3_threshOf4.unmatched_peaks(1).pks, 'o', 'Color', '#0072B2','MarkerFaceColor','#009E73','MarkerEdgeColor','#009E73','MarkerSize',12)
+plot(inVivo_leg3_threshOf4.time, inVivo_leg3_threshOf4.thresh_curve(:,1), '-k','LineWidth',2)
+ylim([-400,800])
+yticks([-400  0 200 400 600 800])
+yticklabels({'','0','','400','','800'})
+xlim([765,1665])
+xticks([765, 1065,1365, 1665]);
+xticklabels({'','','', ''});
+axis = gca;
+
+axis.FontName = 'Arial';
+axis.FontSize = 30;
+axis.LineWidth = lineWidth;
+hold off
+nexttile(7, [1 2])
+plot(OTL38OnlyLeg3_threshOf4.time, OTL38OnlyLeg3_threshOf4.data_bs(:,2),'Color', '#0072B2','LineWidth',1.5);
+hold on
+plot(OTL38OnlyLeg3_threshOf4.time(OTL38OnlyLeg3_threshOf4.fwd_peaks(2).locs), OTL38OnlyLeg3_threshOf4.fwd_peaks(2).pks, '>', 'Color', '#0072B2','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',12)
+plot(OTL38OnlyLeg3_threshOf4.time(OTL38OnlyLeg3_threshOf4.rev_peaks(2).locs), OTL38OnlyLeg3_threshOf4.rev_peaks(2).pks, '<', 'Color', '#0072B2','MarkerFaceColor','b','MarkerEdgeColor','b','MarkerSize',12)
+plot(OTL38OnlyLeg3_threshOf4.time(OTL38OnlyLeg3_threshOf4.unmatched_peaks(2).locs), OTL38OnlyLeg3_threshOf4.unmatched_peaks(2).pks, 'o', 'Color', '#0072B2','MarkerFaceColor','#009E73','MarkerEdgeColor','#009E73','MarkerSize',12)
+plot(OTL38OnlyLeg3_threshOf4.time, OTL38OnlyLeg3_threshOf4.thresh_curve(:,2), '-k','LineWidth',2)
+ylim([-400,800])
+yticks([-400  0 200 400 600 800])
+yticklabels({'','0','','400','','800'})
+xlim([1600,2400]) 
+xticks([1600, 1900,2100, 2400]);
+xticklabels({'0','5','10', '15'});
+xlabel('Time (min)', 'FontSize', 40,'FontWeight','bold','FontName','Arial');
+ylabel( 'NIR-DiFC Signal (nA)', 'FontSize',40,'FontWeight','bold','FontName','Arial');
+axis = gca;
+axis.FontName = 'Arial';
+axis.FontSize = 30;
+axis.LineWidth = lineWidth;
+hold off
+
+
+
+%%
+%New Figure 5 (building off of old fig 4) created based on 1 on 1 meeting with Mark 08/10
+
+clear inVivoLabeledandPrelabeledLegBestAmps_threshOf4 InVivoandPrelabeledScanGroups_threshOf4 prelabeledGroup_threshOf4 inVivoLabeledGroup_threshOf4
+
+%Violin plot of the 4*STD thresh data for prelabeled peaks, no injection matched false peaks, in vivo labeled peaks and OTL38 only matched false peaks
+
+prelabeledTogether_threshOf4 = [prelabeledLeg1_fwdPeakAmp_threshOf4'  prelabeledLeg1_revPeakAmp_threshOf4' prelabeledLeg2_fwdPeakAmp_threshOf4' prelabeledLeg2_revPeakAmp_threshOf4' prelabeledLeg3_fwdPeakAmp_threshOf4' prelabeledLeg3_revPeakAmp_threshOf4'];
+inVivoTogether_threshOf4 = [inVivo_leg1_fwdPeakAmp_threshOf4' inVivo_leg1_revPeakAmp_threshOf4' inVivo_leg2_fwdPeakAmp_threshOf4' inVivo_leg3_fwdPeakAmp_threshOf4' inVivo_leg3_revPeakAmp_threshOf4'];
+no_injectionFalseMatches_threshOf4 = [legControl1_threshOf4_falseMatchedAmps' legControl2_threshOf4_falseMatchedAmps' legControl3_threshOf4_falseMatchedAmps'];
+OTL38OnlyFalseMatches_threshOf4 = [OTL38OnlyLeg1_threshOf4_falseMatchedAmps OTL38OnlyLeg2_threshOf4_falseMatchedAmps];
+inVivoLabeledandPrelabeledandFalseMatchesLegBestAmps_threshOf4 = [prelabeledTogether_threshOf4'; no_injectionFalseMatches_threshOf4'; inVivoTogether_threshOf4';OTL38OnlyFalseMatches_threshOf4'];
+inVivoLabeledandPrelabeledLegBestAmps_threshOf4 = [prelabeledTogether_threshOf4'; inVivoTogether_threshOf4'];
+
+
+
+
+prelabeledGroup_threshOf4 = categorical(repmat(1,904,1), 1, {'Prelabeled'});
+noInjectionGroup_FalseMatches_threshOf4 = categorical(repmat(2,5,1), 2, {'No injection'});
+inVivoLabeledGroup_threshOf4= categorical(repmat(3,108,1), 3, {'in vivo Labeled'}); 
+OTL38OnlyGroup_FalseMatches_threshOf4= categorical(repmat(4,9,1), 4, {'OTL38 Only'}); 
+InVivoandPrelabeledScanandFalseMatchesGroups_threshOf4 = [prelabeledGroup_threshOf4; noInjectionGroup_FalseMatches_threshOf4; inVivoLabeledGroup_threshOf4; OTL38OnlyGroup_FalseMatches_threshOf4];
+InVivoandPrelabeledScanGroups_threshOf4 = [prelabeledGroup_threshOf4; inVivoLabeledGroup_threshOf4];
+
+%Making a bar graph based on the NIR fluoresecnce for diffierent in vivo labeling concentrations and prelabeld
+
+mean_in_vivo_2_5ug = 3770;
+std_in_vivo_2_5ug = 1094;
+
+mean_in_vivo_5ug = 4808;
+std_in_vivo_5ug = 1752;
+
+mean_in_vivo_15ug = 5808;
+std_in_vivo_15ug = 2116;
+
+mean_prelabeled = 21292;
+std_prelabeled = 8260;
+
+
+
+
+
+
+width = 0.4;
+lineWidth = 1;
+MarkerSize = 15;
+figure(5);
+tiledlayout(2,3);
+nexttile(1, [2 1])
+%4*STD Count rate
+bar(1,mean_prelabeled_L1210A_threshOf4_total_matched_Peaks,width);
+hold on
+error_PrelabeledCountRate = errorbar(1,mean_prelabeled_L1210A_threshOf4_total_matched_Peaks,[],std_prelabeled_L1210A_threshOf4_total_matched_Peaks,'LineWidth',1,'CapSize',15);
+error_PrelabeledCountRate.Color = [0 0 0];
+
+bar(2,mean_in_vivo_L1210A_scan_threshOf4_total_Matched_Peaks,width,'FaceColor',[0.47 0.67 0.19]);
+error_InVivoLabeledCountRate = errorbar(2,mean_in_vivo_L1210A_scan_threshOf4_total_Matched_Peaks,[],std_in_vivo_L1210A_scan_threshOf4_total_Matched_Peaks,'LineWidth',1,'CapSize',15);
+error_InVivoLabeledCountRate.Color = [0 0 0];
+
+bar(3,mean_no_injection_control_threshOf4_total_matched_FAR,width,'FaceColor',[0.93,0.69,0.13]);
+error_No_InjectionCountRate = errorbar(3,mean_no_injection_control_threshOf4_total_matched_FAR,[],std_no_injection_control_threshOf4_total_matched_FAR,'LineWidth',1,'CapSize',15);
+error_No_InjectionCountRate.Color = [0 0 0];
+
+bar(4,mean_control_scan_threshOf4_total_Matched_FAR,width);
+error_OTL38OnlyCountRate = errorbar(4,mean_control_scan_threshOf4_total_Matched_FAR,[],std_control_scan_threshOf4_total_Matched_FAR,'LineWidth',1,'CapSize',15);
+error_OTL38OnlyCountRate.Color = [0 0 0];
+hold off
+xticks(1:4)
+xticklabels({'Prelabeled ','in vivo Labeled','No injection','OTL38 Only'});
+xtickangle(45)
+ylim([0 8]);
+yticks([0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8])
+yticklabels({'0','', '1','','2','','3','','4','','5','','6','','7','','8'});
+ylabel('Matched Cell Count Rate (/min)','FontSize',30,'FontWeight','bold','FontName','Arial');
+axis = gca;
+axis.FontName = 'Arial';
+axis.FontWeight = 'bold';
+axis.FontSize = 30;
+axis.LineWidth = lineWidth;
+nexttile(2, [2 1])
+%Violin plot of the 4*STD thresh data for prelabeled peaks, no injection matched false peaks, in vivo labeled peaks and OTL38 only matched false peaks
+violinplot(inVivoLabeledandPrelabeledLegBestAmps_threshOf4, InVivoandPrelabeledScanGroups_threshOf4,'ShowMean',true,'ShowBox',false,'ShowWhiskers',false,'EdgeColor',[0 0 0],'MedianColor',[1 0 1],'ViolinColor',[0  0.45 0.74;0.47 0.67 0.19;0.93 0.69 0.13; 0.64 0.08 0.18]);
+hold on
+legend('','','','Mean','','Median');
+ylim([0 1600]);
+yticks([0 200 400 600 800 1000 1200 1400 1600])
+yticklabels({'0','', '400','','800','','1200','','1600'});
+ylabel('Matched Cell Amplitude (nA)','FontSize',40,'FontWeight','bold','FontName','Arial');
+xtickangle(45);
+axis = gca;
+axis.FontSize = 30;
+axis.FontName = 'Arial';
+axis.FontWeight = 'bold';
+axis.LineWidth = lineWidth;
+hold off
+nexttile(3, [2, 1])
+bar(1,mean_prelabeled,width);
+hold on
+error_OTL38OnlyCountRate = errorbar(1,mean_prelabeled,[],std_prelabeled,'LineWidth',1,'CapSize',15);
+error_OTL38OnlyCountRate.Color = [0 0 0];
+
+bar(2,mean_in_vivo_2_5ug,width,'FaceColor',[0.47 0.67 0.19]);
+error_PrelabeledCountRate = errorbar(2,mean_in_vivo_2_5ug,[],std_in_vivo_2_5ug,'LineWidth',1,'CapSize',15);
+error_PrelabeledCountRate.Color = [0 0 0];
+
+bar(3,mean_in_vivo_5ug,width,'FaceColor',[0.49,0.18,0.56]);
+error_InVivoLabeledCountRate = errorbar(3,mean_in_vivo_5ug,[],std_in_vivo_5ug,'LineWidth',1,'CapSize',15);
+error_InVivoLabeledCountRate.Color = [0 0 0];
+
+% bar(3,mean_in_vivo_15ug,width);
+% error_No_InjectionCountRate = errorbar(3,mean_in_vivo_15ug,[],std_in_vivo_15ug,'LineWidth',1,'CapSize',15);
+% error_No_InjectionCountRate.Color = [0 0 0];
+hold off
+ylim([0, 30000])
+yticks([0 5000 10000 15000 20000 25000 30000]);
+xticks(1:3)
+xticklabels({'Prelabeled','2.5µg OTL38 ','5µg OTL38','15µg OTL38'});
+xtickangle(45)
+axis = gca;
+axis.FontName = 'Arial';
+axis.FontWeight = 'bold';
+axis.FontSize = 30;
+axis.LineWidth = lineWidth;
+ylabel('NIR Fluorescence (OTL38)','FontSize',30,'FontWeight','bold','FontName','Arial');
+
+
+
+
+%%
+%Redo of figure 6 based on double checking of flow
+InVitroLabelingPercentages = [99.8 99.9 99.9];
+InVivoLabelingPercentages = [28.26 70 78.57];
+
+width = 0.4;
+lineWidth = 1;
+MarkerSize = 15;
+figure(6);
+tiledlayout(4,2);
+nexttile(1, [2 1])
+%noise
+bar(1,meanLegPrelabeledlNoise,0.3);
+hold on
+bar(2, meanLegInVivoLabeledNoise,0.3,'FaceColor',[0.47 0.67 0.19])
+error_noInjectionNoise = errorbar(1,meanLegPrelabeledlNoise,[],stdLegPrelabeledlNoise,'LineWidth',1,'CapSize',15);
+error_noInjectionNoise.Color = [0 0 0];
+error_OTL38InjectionOnlyNoise = errorbar(2,meanLegInVivoLabeledNoise,[],stdLegInVivoLabeledNoise,'LineWidth',1,'CapSize',15);
+error_OTL38InjectionOnlyNoise.Color = [0 0 0];
+hold off
+xticks(1:2)
+xticklabels({'Prelabeled',' in vivo Labeled'});
+xtickangle(45);
+% ylim([0 60]);
+% yticks([0 5 10 15 20 25 30 35 40 45 50 55 60])
+% yticklabels({'0','', '10','','20','','30','','40','','50','','60'});
+ylabel('Background Noise (nA)','FontSize',30,'FontWeight','bold','FontName','Arial');
+axis = gca;
+axis.FontName = 'Arial';
+axis.FontWeight = 'bold';
+axis.FontSize = 30;
+axis.LineWidth = lineWidth;
+
+nexttile(2, [2 1])
+%4*STD Count rate
+bar(1,mean_prelabeled_L1210A_threshOf4_total_matched_Peaks,width);
+hold on
+error_PrelabeledCountRate = errorbar(1,mean_prelabeled_L1210A_threshOf4_total_matched_Peaks,[],std_prelabeled_L1210A_threshOf4_total_matched_Peaks,'LineWidth',1,'CapSize',15);
+error_PrelabeledCountRate.Color = [0 0 0];
+
+bar(2,mean_in_vivo_L1210A_scan_threshOf4_total_Matched_Peaks,width,'FaceColor',[0.47 0.67 0.19]);
+error_InVivoLabeledCountRate = errorbar(2,mean_in_vivo_L1210A_scan_threshOf4_total_Matched_Peaks,[],std_in_vivo_L1210A_scan_threshOf4_total_Matched_Peaks,'LineWidth',1,'CapSize',15);
+error_InVivoLabeledCountRate.Color = [0 0 0];
+
+bar(3,mean_estimated_in_vivo_count_rate,width,'FaceColor',[0.93,0.69,0.13]);
+error_No_InjectionCountRate = errorbar(3,mean_estimated_in_vivo_count_rate,[],std_estimated_in_vivo_count_rate,'LineWidth',1,'CapSize',15);
+error_No_InjectionCountRate.Color = [0 0 0];
+hold off
+xticks(1:3)
+xticklabels({'Prelabeled ','in vivo Labeled','Estimated'});
+xtickangle(45)
+ylim([0 8]);
+yticks([0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8])
+yticklabels({'0','', '1','','2','','3','','4','','5','','6','','7','','8'});
+ylabel('Matched Cell Count Rate (/min)','FontSize',30,'FontWeight','bold','FontName','Arial');
+axis = gca;
+axis.FontName = 'Arial';
+axis.FontSize = 30;
+axis.FontWeight = 'bold';
+axis.LineWidth = lineWidth;
+nexttile(5, [2 2])
+errorbar(timePoints,backgroundNoiseRatioOTL38MiceCalculatedMean,-backgroundNoiseRatioOTL38MiceCalculatedSTD,backgroundNoiseRatioOTL38MiceCalculatedSTD, 'Marker','o','MarkerFaceColor','black','MarkerEdgeColor','black','MarkerSize',10,'LineStyle','--','LineWidth',lineWidth,'Color','k','CapSize',20);
+legend({'2.5µg OTL38'})
+xticks( 0:3:24);
+ylim([0 6]);
+yticks(0:0.5:6);
+yticklabels({'0','','1','','2','','3','','4','','5','','6'})
+xlabel({'Post OTL38 Injection (Hours)'},'FontSize',30,'FontWeight','bold','FontName','Arial');
+ylabel({'Background Noise (Normalized to Baseline)'},'FontSize',30,'FontWeight','bold','FontName','Arial');
+% title({'Calculated using OTL38', 'Mice Baseline Background'},'FontSize',fontSize,'FontWeight','bold','FontName','Arial')
+hold off
+axis = gca;
+box on;
+axis.FontSize = 30;
+axis.FontName = 'Arial';
+axis.FontWeight = 'bold';
+axis.LineWidth = lineWidth;
+
+
+
+
+
