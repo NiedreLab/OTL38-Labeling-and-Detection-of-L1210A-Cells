@@ -1,6 +1,8 @@
 %Plotting Figures for "In Vivo Labeling and Detection of Circulating Tumor Cells in Mice Using OTL38" Manuscript
 %Josh Pace 20230502
 
+%Northeastern University , Department of Bioengineering, Biomedical Optics Research Group
+
 %Data is avaliable through  the Pennsieve datasharing platform (https://discover.pennsieve.io/datasets/346)
 
 %Download the "DiFC_Files" folder and place this script in the same directory as that folder. The paths to loading the data should work for mac
